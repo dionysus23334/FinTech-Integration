@@ -4,7 +4,7 @@ import streamlit as st
 st.title("Simple Chat Interface")
 
 st.header("Chat History")
-messages = st.container(height=300)
+messages = st.container()
 # Assigning a unique key for the sidebar chat input
 if prompt := st.chat_input("Say something", key="sidebar_input"):
     messages.chat_message("user").write(prompt)
