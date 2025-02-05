@@ -13,7 +13,9 @@ chatbot_glm=Chatbot_GLM4(api_key)
 # Main Chat Interface
 st.title("Simple Chat Interface")
 
-st.header("Chat History")
+
+
+st.header("Chat Box")
 messages = st.container()
 
 if 'chat_history' not in st.session_state:
