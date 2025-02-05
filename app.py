@@ -3,7 +3,6 @@ import streamlit as st
 pages_manager = st.navigation(
     [
         st.Page("Home.py"),
-        st.Page("SearchWeb.py"),
         st.Page("Chatbot.py"),
         st.Page("Word_Cloud.py")
         ]
