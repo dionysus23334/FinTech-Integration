@@ -33,11 +33,11 @@ if prompt := st.chat_input("Say something"):
 
     # Generate and save assistant's response
     response = chatbot_glm.answer(prompt)
-    st.session_state.messages.append({"role": "ai", "content": response})
+    st.session_state.messages.append({"role": "ai", "content": response + st.session_state.chat_history})
     # Display the assistant's response
     with messages:
         with st.chat_message("ai"):
             st.write(response)
         with st.chat_message("assistant"):
-            st.write(chatbot_glm.chat_history)
+            st.write(st.session_state.chat_history)
 
