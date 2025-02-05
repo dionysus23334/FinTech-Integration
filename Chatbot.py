@@ -6,15 +6,12 @@ if "messages" not in st.session_state:
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 
-
 api_key = "6dd4521590f14ea33d8288e5037c6215.aDsJWqIDbkt1Al8y"  # 请填写您自己的APIKey
+# api_key = st.text_input("输入您的API KEY",value="Your api key")
 chatbot_glm=Chatbot_GLM4(api_key)
 
 # Main Chat Interface
 st.title("Simple Chat Interface")
-
-
-api_key = st.text_input("输入您的API KEY",value="Your api key")
 
 chatbot = st.selectbox(
         'Pick a Chatbot',
