@@ -34,8 +34,8 @@ if chatbot == '智谱清言GLM':
             with st.chat_message(message["role"]):
                 st.write(message["content"])
 
-    if not st.session_state.prompt:
-        st.session_state.prompt+=prompt_template
+    if st.session_state.prompt==None:
+        st.session_state.prompt=prompt_template
     
     # Input box for new messages
     if prompt := st.chat_input("Say something"):
