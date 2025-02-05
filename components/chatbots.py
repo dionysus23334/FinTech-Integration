@@ -3,7 +3,7 @@ from zhipuai import ZhipuAI
 class Chatbot_GLM4:
     def __init__(self, api_key):
         self.api_key = api_key
-    def answer(self, question):
+    def answer(self, inputs):
         """
         使用智谱AI的chat API来回答一个问题。
         参数:
@@ -17,7 +17,7 @@ class Chatbot_GLM4:
         response = client.chat.completions.create(
             model="glm-4",  # 使用的模型
             messages=[
-                {"role": "user", "content": self.chat_history},
+                {"role": "user", "content": inputs},
             ],
         )
         # 从响应中获取回答内容
