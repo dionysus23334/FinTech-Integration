@@ -1,6 +1,7 @@
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import streamlit as st
+from data_collection.spider import SimpleSpider
 
 def generate_word_cloud(text_input):
     # 创建词云对象
@@ -15,7 +16,7 @@ def generate_word_cloud(text_input):
     plt.axis('off')  # 不显示坐标轴
     return plt
 
-from data_collection.spider import SimpleSpider
+st.page_link("plot_demo.py", label="page 1")
 
 simplespider = SimpleSpider()
 data_example = simplespider.scrape_website("https://www.cls.cn/")
