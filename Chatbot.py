@@ -7,36 +7,27 @@ if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 if 'prompt' not in st.session_state:
     st.session_state.prompt = None
-
 api_key = "6dd4521590f14ea33d8288e5037c6215.aDsJWqIDbkt1Al8y"  # 请填写您自己的APIKey
 # api_key = st.text_input("输入您的API KEY",value="Your api key")
 chatbot_glm=Chatbot_GLM4(api_key)
-
 # Main Chat Interface
 st.title("Simple Chat Interface")
-
 chatbot = st.selectbox(
         'Pick a Chatbot',
         [None, '智谱清言GLM'],args=[1]
     )
-
 with open('templates/prompt_keep_glm_memory.txt', "r", encoding="utf-8") as file:
     prompt_template = file.read()
-
 if chatbot == '智谱清言GLM':
     st.header("ChatGLM")
-    
     messages = st.container()
-    
     # Display previous messages from the session state
     with messages:
         for message in st.session_state.messages:
             with st.chat_message(message["role"]):
                 st.write(message["content"])
-
     if st.session_state.prompt==None:
         st.session_state.prompt=prompt_template
-    
     # Input box for new messages
     if prompt := st.chat_input("Say something"):
         # Save user message to session state
@@ -46,7 +37,6 @@ if chatbot == '智谱清言GLM':
         with messages:
             with st.chat_message("user"):
                 st.write(prompt)
-
         _request_ = f"""
 提示词：
 
@@ -62,7 +52,6 @@ if chatbot == '智谱清言GLM':
 
 )
         """
-        
         # Generate and save assistant's response
         response = chatbot_glm.answer(_request_)
         st.session_state.messages.append({"role": "ai", "content": response})
@@ -73,8 +62,6 @@ if chatbot == '智谱清言GLM':
                 st.write(response)
             # with st.chat_message("assistant"):
             #     st.write(st.session_state.chat_history)
-
-        st.write(_request_)
 
 if chatbot == None:
     st.header("None")
