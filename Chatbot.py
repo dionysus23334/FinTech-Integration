@@ -72,7 +72,7 @@ if chatbot == '智谱清言GLM':
             with st.chat_message("assistant"):
                 st.write(st.session_state.chat_history)
 
-    st.markdown(_request_)
+        st.markdown(_request_)
 
 if chatbot == None:
     st.header("None")
