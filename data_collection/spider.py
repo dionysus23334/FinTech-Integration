@@ -56,7 +56,7 @@ class SimpleSpider:
             'tables': tables_data
         }
         
-        return json.dumps(data, ensure_ascii=False, indent=4)
+        return data
 
 # 示例用法
 if __name__ == "__main__":
