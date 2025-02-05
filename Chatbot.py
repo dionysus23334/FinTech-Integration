@@ -7,7 +7,7 @@ st.header("Chat History")
 messages = st.container()
 
 
-While True:
+while True:
     # Assigning a unique key for the sidebar chat input
     if prompt := st.chat_input("Say something", key="sidebar_input"):
         messages.chat_message("user").write(prompt)
