@@ -16,6 +16,9 @@ st.title("Simple Chat Interface")
 st.header("Chat History")
 messages = st.container()
 
+if 'chat_history' not in st.session_state:
+    st.session_state.chat_history = []
+
 # Display previous messages from the session state
 with messages:
     for message in st.session_state.messages:
@@ -26,14 +29,16 @@ with messages:
 if prompt := st.chat_input("Say something"):
     # Save user message to session state
     st.session_state.messages.append({"role": "user", "content": prompt})
+    st.session_state.chat_history.append({"role": "user", "history_content": prompt})
     # Display the user message
     with messages:
         with st.chat_message("user"):
             st.write(prompt)
 
     # Generate and save assistant's response
-    response = chatbot_glm.answer(prompt)
-    st.session_state.messages.append({"role": "ai", "content": response + st.session_state.chat_history})
+    response = chatbot_glm.answer(f"user: {prompt}" + f"(history: {st.session_state.chat_history})")
+    st.session_state.messages.append({"role": "ai", "content": response})
+    st.session_state.chat_history.append({"role": "ai", "history_content": response})
     # Display the assistant's response
     with messages:
         with st.chat_message("ai"):
