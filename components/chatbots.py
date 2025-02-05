@@ -2,9 +2,10 @@ from zhipuai import ZhipuAI
 
 
 class Chatbot_GLM4:
-    def __init__(self):
+    def __init__(self, api_key):
+        self.api_key = api_key
         self.chat_history=''
-    def answer(self,question):
+    def answer(self, question):
         """
         使用智谱AI的chat API来回答一个问题。
 
@@ -15,7 +16,7 @@ class Chatbot_GLM4:
         - response_text: 字符串，智谱AI的回答。
         """
         # 初始化客户端，使用你的API Key
-        client = ZhipuAI(api_key=api_key)  # 请用你的API Key替换这里
+        client = ZhipuAI(api_key=self.api_key)  # 请用你的API Key替换这里
         self.chat_history += question
         # 创建聊天完成请求
         response = client.chat.completions.create(
