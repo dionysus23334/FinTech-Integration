@@ -24,3 +24,6 @@ data_example = simplespider.scrape_website(link)
 plot = generate_word_cloud(data_example['text'])
 plot.show()
 st.pyplot(plot)
+
+
+
