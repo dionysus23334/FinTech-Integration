@@ -69,8 +69,8 @@ if chatbot == '智谱清言GLM':
         with messages:
             with st.chat_message("ai"):
                 st.write(response)
-            with st.chat_message("assistant"):
-                st.write(st.session_state.chat_history)
+            # with st.chat_message("assistant"):
+            #     st.write(st.session_state.chat_history)
 
         st.write(_request_)
 
