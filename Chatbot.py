@@ -46,9 +46,23 @@ if chatbot == '智谱清言GLM':
         with messages:
             with st.chat_message("user"):
                 st.write(prompt)
-    
+
+        _request_ = f"""
+提示词：
+{st.session_state.prompt}
+
+此次用户输入：
+{prompt}
+
+(对话数据: 
+
+{st.session_state.chat_history}
+
+)
+        """
+        
         # Generate and save assistant's response
-        response = chatbot_glm.answer('提示词: \n'+st.session_state.prompt + f"\n此次用户输入:\n {prompt}" + f"(\n对话json数据: \n{st.session_state.chat_history})")
+        response = chatbot_glm.answer(_request_)
         st.session_state.messages.append({"role": "ai", "content": response})
         st.session_state.chat_history.append({"role": "ai", "history_content": response})
         # Display the assistant's response
