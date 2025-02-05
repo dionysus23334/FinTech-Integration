@@ -49,9 +49,11 @@ if chatbot == '智谱清言GLM':
 
         _request_ = f"""
 提示词：
+
 {st.session_state.prompt}
 
 此次用户输入：
+
 {prompt}
 
 (对话数据: 
