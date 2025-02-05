@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 from data_collection.spider import SimpleSpider
 
-link = st.text_input("https://www.cls.cn/")
+link = st.text_input("输入网站链接（URL）",value="https://www.cls.cn/")
 
 def generate_word_cloud(text_input):
     # 创建词云对象
