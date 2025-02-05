@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 from data_collection.spider import SimpleSpider
 
-st.page_link("plot_demo.py", label="page 1")
+st.page_link("plot_df.py", label="page 1")
 
 def generate_word_cloud(text_input):
     # 创建词云对象
