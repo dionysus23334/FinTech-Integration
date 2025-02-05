@@ -6,7 +6,7 @@ if "messages" not in st.session_state:
 
 from zhipuai import ZhipuAI
 
-api_key = "9c7fc9a350127ae3"  # 请填写您自己的APIKey
+api_key = "6dd4521590f14ea33d8288e5037c6215.aDsJWqIDbkt1Al8y"  # 请填写您自己的APIKey
 
 class Chatbot_GLM4:
     def __init__(self):
