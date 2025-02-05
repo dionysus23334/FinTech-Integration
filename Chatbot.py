@@ -8,7 +8,7 @@ from components.chatbots import Chatbot_GLM4
 
 api_key = "6dd4521590f14ea33d8288e5037c6215.aDsJWqIDbkt1Al8y"  # 请填写您自己的APIKey
 
-chatbot_glm=Chatbot_GLM4()
+chatbot_glm=Chatbot_GLM4(api_key)
 
 # Main Chat Interface
 st.title("Simple Chat Interface")
