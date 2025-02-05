@@ -6,7 +6,7 @@ pages_manager = st.navigation(
         st.Page("SearchWeb.py"),
         st.Page("plot_df.py"),
         st.Page("plot_demo.py"),
-        st.Page("plot_word_cloud.py")
+        st.Page("Word_Cloud.py")
         ]
     )
 
