@@ -29,7 +29,7 @@ class Chatbot_GLM4:
         # 从响应中获取回答内容
         response_text = response.choices[0].message.content
         self.chat_history += response_text
-        print(self.chat_history)
+
         return response_text
 
   
