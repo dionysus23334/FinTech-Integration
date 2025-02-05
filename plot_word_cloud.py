@@ -5,7 +5,7 @@ import streamlit as st
 def generate_word_cloud(text_input):
     # 创建词云对象
     wordcloud = WordCloud(
-        font_path="/fonts/simhei.ttf",
+        font_path="/fonts/SimHei.ttf",
         width=800, height=600,
         background_color='white'
     ).generate(text_input)
