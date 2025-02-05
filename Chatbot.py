@@ -58,5 +58,7 @@ if chatbot == '智谱清言GLM':
             with st.chat_message("assistant"):
                 st.write(st.session_state.chat_history)
 
+    st.markdown('提示词: \n'+st.session_state.prompt + f"\n此次用户输入:\n {prompt}" + f"(\n对话json数据: \n{st.session_state.chat_history})")
+
 if chatbot == None:
     st.header("None")
