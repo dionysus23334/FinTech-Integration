@@ -23,7 +23,7 @@ def extract_main_info(text):
     # 从响应中获取回答内容
     response_text = response.choices[0].message.content
     # 解析 API 返回结果
-    extracted_text = response.choices[0].text.strip()
+    extracted_text = response.choices[0].message.strip()
     events = [line.strip() for line in extracted_text.split("\n") if line.strip()]
     return events
 
