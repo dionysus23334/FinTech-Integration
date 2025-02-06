@@ -1,4 +1,5 @@
 from zhipuai import ZhipuAI
+import streamlit as st
 
 class Chatbot_GLM4:
     def __init__(self, api_key):
