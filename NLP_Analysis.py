@@ -26,7 +26,7 @@ plot = generate_word_cloud(data_example['text'])
 plot.show()
 st.pyplot(plot)
 
-if data_example['text']:
+if text_input := data_example['text']:
     # Step 1: 提取主体信息
     events = extract_main_info(text_input)
 
