@@ -26,6 +26,7 @@ def extract_main_info(text):
     # 解析 API 返回结果
     extracted_text = response_text.strip()
     events = [line.strip() for line in extracted_text.split("\n") if line.strip()]
+    print(events)
     return events
 
 
