@@ -3,6 +3,11 @@ import matplotlib.pyplot as plt
 import streamlit as st
 from data_collection.spider import SimpleSpider
 from data_collection.extract_info import extract_main_info
+from transformers import pipeline
+
+
+# 情绪分析模型
+sentiment_analyzer = pipeline("sentiment-analysis")
 
 link = st.text_input("输入网站链接（URL）",value="https://www.cls.cn/")
 
