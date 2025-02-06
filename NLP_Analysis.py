@@ -4,6 +4,7 @@ import streamlit as st
 from data_collection.spider import SimpleSpider
 from data_collection.extract_info import extract_main_info
 import pandas as pd
+from zhipuai import ZhipuAI
 
 link = st.text_input("输入网站链接（URL）",value="https://www.cls.cn/")
 
