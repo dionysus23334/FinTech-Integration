@@ -53,9 +53,9 @@ plot.show()
 st.pyplot(plot)
 
 sentiment_dict = {
-    1:'Positive',
-    0:'Neutral',
-    -1:'Negative'
+    '1':'Positive',
+    '0':'Neutral',
+    '-1':'Negative'
 }
 
 if text_input := data_example['text']:
