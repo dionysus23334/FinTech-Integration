@@ -66,9 +66,12 @@ sentiment_dict = {
 if text_input := data_example['text']:
     # Step 1: 提取主体信息
     events = extract_main_info(text_input)
-
+    print(events)
+    
     # Step 2: 对每个事件进行情绪分析
     sentiments = analyze_sentiments(events)
+    print(sentiments
+    
     data = [{"简化内容": event, "情绪": sentiment_dict[sentiment]} for event, sentiment in zip(events, sentiments)]
 
     # 转换为 DataFrame 并展示
