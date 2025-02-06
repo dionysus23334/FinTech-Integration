@@ -12,7 +12,7 @@ def extract_main_info(text):
     2. 事件2
     3. 事件3
     '''
-    client = ZhipuAI(api_key)  # 请用你的API Key替换这里
+    client = ZhipuAI(api_key=api_key)  # 请用你的API Key替换这里
     # 创建聊天完成请求
     response = client.chat.completions.create(
         model="glm-4",  # 使用的模型
