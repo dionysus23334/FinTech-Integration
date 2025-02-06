@@ -12,6 +12,11 @@ def extract_main_info(text):
     1. 事件1
     2. 事件2
     3. 事件3
+    4. ...
+    5. ...
+    .
+    .
+    .
     '''
     client = ZhipuAI(api_key=api_key)  # 请用你的API Key替换这里
     # 创建聊天完成请求
@@ -26,7 +31,6 @@ def extract_main_info(text):
     # 解析 API 返回结果
     extracted_text = response_text.strip()
     events = [line.strip() for line in extracted_text.split("\n") if line.strip()]
-    print(events)
     return events
 
 
