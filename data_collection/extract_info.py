@@ -1,5 +1,5 @@
 
-
+from zhipuai import ZhipuAI
 
 # 提取主体信息的提示词模板
 def extract_main_info(text):
@@ -11,13 +11,16 @@ def extract_main_info(text):
     2. 事件2
     3. 事件3
     '''
-    
-    response = openai.Completion.create(
-        engine="gpt-4",
-        prompt=prompt,
-        max_tokens=500,
-        temperature=0.5
+    client = ZhipuAI(api_key=self.api_key)  # 请用你的API Key替换这里
+    # 创建聊天完成请求
+    response = client.chat.completions.create(
+        model="glm-4",  # 使用的模型
+        messages=[
+            {"role": "user", "content": prompt},
+        ],
     )
+    # 从响应中获取回答内容
+    response_text = response.choices[0].message.content
     # 解析 API 返回结果
     extracted_text = response.choices[0].text.strip()
     events = [line.strip() for line in extracted_text.split("\n") if line.strip()]
