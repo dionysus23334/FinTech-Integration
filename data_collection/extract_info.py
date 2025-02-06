@@ -1,10 +1,9 @@
 
 from zhipuai import ZhipuAI
 
-api_key = "6dd4521590f14ea33d8288e5037c6215.aDsJWqIDbkt1Al8y"  # 请填写您自己的APIKey
-
 # 提取主体信息的提示词模板
 def extract_main_info(text):
+    api_key = "6dd4521590f14ea33d8288e5037c6215.aDsJWqIDbkt1Al8y"  # 请填写您自己的APIKey
     prompt = f'''
     从以下文本中提取出主要的事件信息，并将其简化为几句话，每句话都能完整表达一个事件：
     "{text}"
