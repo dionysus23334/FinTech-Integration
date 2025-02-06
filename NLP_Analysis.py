@@ -13,27 +13,29 @@ def analyze_sentiments(events):
     client = ZhipuAI(api_key=api_key)  # 请用你的API Key替换这里
     
     # 准备批量情感分析请求
-    messages = []
-    for event in events:
-        prompt = f'''
-        根据下面这段话：
-        {event}
-        返回它的情感特征，如
-        Positive返回1
-        Negative返回-1
-        Neutral返回0
-        不要返回其他内容只在-1，0，1之间选择
-        '''
-        messages.append({"role": "user", "content": prompt})
+    prompt = f'''
+    根据下面这段话：
+    {events}
+    返回它的情感特征，如
+    Positive返回1
+    Negative返回-1
+    Neutral返回0
+    不要返回其他内容只在-1，0，1之间选择
+    如一共有5句话
+    [...,...,...,...,...]
     
+    返回格式：
+    [0,-1,1,0,-1]
+    '''
+
     # 创建聊天完成请求
     response = client.chat.completions.create(
         model="glm-4",  # 使用的模型
-        messages=messages,
+        messages={"role": "user", "content": prompt},
     )
     
     # 从响应中获取回答内容
-    sentiments = [choice.message.content for choice in response.choices]
+    sentiments = response.choices[0].message.content
     return sentiments
 
 def generate_word_cloud(text_input):
@@ -65,12 +67,10 @@ sentiment_dict = {
 if text_input := data_example['text']:
     # Step 1: 提取主体信息
     events = extract_main_info(text_input)
-    print(events)
     st.write(events)
     
     # Step 2: 对每个事件进行情绪分析
     sentiments = analyze_sentiments(events)
-    print(sentiments)
     st.write(sentiments)
     
     data = [{"简化内容": event, "情绪": sentiment_dict[sentiment]} for event, sentiment in zip(events, sentiments)]
