@@ -30,7 +30,7 @@ def analyze_sentiment(text):
     )
     # 从响应中获取回答内容
     response_text = response.choices[0].message.content
-    return response
+    return response_text
 
 def generate_word_cloud(text_input):
     # 创建词云对象
