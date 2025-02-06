@@ -1,6 +1,4 @@
 
-api_key = "6dd4521590f14ea33d8288e5037c6215.aDsJWqIDbkt1Al8y"  # 请填写您自己的APIKey
-
 import os
 import streamlit as st
 import pandas as pd
@@ -68,8 +66,8 @@ def generate_word_cloud(text_input):
     """
     try:
         wordcloud = WordCloud(
-            font_path="SimHei.ttf",  # Windows 可能需要具体路径
-            width=800, height=600,
+            font_path = "./fonts/SimHei.ttf",  # Windows 可能需要具体路径
+            width = 800, height= 600,
             background_color='white'
         ).generate(text_input)
 
