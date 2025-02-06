@@ -16,7 +16,6 @@ def analyze_sentiments(events):
     messages = []
     for event in events:
         prompt = f'''
-        请严格按以下叙述生成回复，不要返回其他脱离格式的信息，否则会对后续文本处理造成干扰和噪音。
         根据下面这段话：
         {event}
         返回它的情感特征，如
