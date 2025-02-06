@@ -71,3 +71,5 @@ if text_input := data_example['text']:
     # 转换为 DataFrame 并展示
     df = pd.DataFrame(data)
     st.dataframe(df)
+
+st.write(data_example['links'])
