@@ -4,3 +4,4 @@ wordcloud
 bs4
 fake_useragent
 zhipuai
+transformers
