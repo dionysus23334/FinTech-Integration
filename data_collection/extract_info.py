@@ -5,7 +5,8 @@ from zhipuai import ZhipuAI
 def extract_main_info(text):
     api_key = "6dd4521590f14ea33d8288e5037c6215.aDsJWqIDbkt1Al8y"  # 请填写您自己的APIKey
     prompt = f'''
-    从以下文本中提取出主要的事件信息，并将其简化为几句话，每句话都能完整表达一个事件：
+    请严格按返回格式生成回复，不要返回其他脱离格式的信息，否则会对后续文本处理造成干扰和噪音。
+    从以下文本中提取出主要的事件信息，并将其表达为多句完整的话，每句话都能完整表达一个事件：
     "{text}"
     返回格式：
     1. 事件1
