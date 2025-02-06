@@ -27,8 +27,6 @@ class SimpleSpider:
 
         # 提取所有文本内容
         text_content = soup.get_text()
-        print("文本内容:")
-        print(text_content)
         
         # Extract all links from <a> tags
         links = [a['href'] for a in soup.find_all('a', href=True)]
