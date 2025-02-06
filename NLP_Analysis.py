@@ -1,4 +1,3 @@
-
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import streamlit as st
@@ -9,35 +8,29 @@ from zhipuai import ZhipuAI
 
 link = st.text_input("输入网站链接（URL）",value="https://www.cls.cn/")
 
-def analyze_sentiments(events):
+def analyze_sentiment(text):
     api_key = "6dd4521590f14ea33d8288e5037c6215.aDsJWqIDbkt1Al8y"  # 请填写您自己的APIKey
-    client = ZhipuAI(api_key=api_key)  # 请用你的API Key替换这里
-    
-    # 准备批量情感分析请求
     prompt = f'''
-    你是一个情绪情感分析的助手，严格按照下述的返回格式完成任务，根据下面这段话：
-    {events}
+    请严格按以下叙述生成回复，不要返回其他脱离格式的信息，否则会对后续文本处理造成干扰和噪音。
+    根据下面这段话：
+    {text}
     返回它的情感特征，如
     Positive返回1
     Negative返回-1
     Neutral返回0
     不要返回其他内容只在-1，0，1之间选择
-    如一共有5句话
-    [...,...,...,...,...]
-    
-    返回格式：
-    [0,-1,1,0,-1]
     '''
-
+    client = ZhipuAI(api_key=api_key)  # 请用你的API Key替换这里
     # 创建聊天完成请求
     response = client.chat.completions.create(
         model="glm-4",  # 使用的模型
-        messages={"role": "user", "content": prompt},
+        messages=[
+            {"role": "user", "content": prompt},
+        ],
     )
-    
     # 从响应中获取回答内容
-    sentiments = response.choices[0].message.content
-    return sentiments
+    response_text = response.choices[0].message.content
+    return response_text
 
 def generate_word_cloud(text_input):
     # 创建词云对象
@@ -69,15 +62,12 @@ if text_input := data_example['text']:
     # Step 1: 提取主体信息
     events = extract_main_info(text_input)
     st.write(events)
-    
     # Step 2: 对每个事件进行情绪分析
-    sentiments = analyze_sentiments(events)
-    st.write(sentiments)
+    data = []
+    for event in events:
+        sentiment = analyze_sentiment(event)
+        data.append({"简化内容": event, "情绪": sentiment_dict[sentiment]})
     
-    data = [{"简化内容": event, "情绪": sentiment_dict[sentiment]} for event, sentiment in zip(events, sentiments)]
-
     # 转换为 DataFrame 并展示
     df = pd.DataFrame(data)
     st.dataframe(df)
-
-st.write(data_example['links'])
