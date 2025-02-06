@@ -91,7 +91,7 @@ if 'text' in data_example and data_example['text']:
     if plot:
         st.pyplot(plot)
 
-    sentiment_dict = {1: 'Positive', 0: 'Neutral', -1: 'Negative'}
+    sentiment_dict = {'1': 'Positive', '0': 'Neutral', '-1': 'Negative'}
 
     # 提取主要信息
     events = extract_main_info(text_content)
