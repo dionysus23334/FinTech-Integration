@@ -1,3 +1,4 @@
+
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import streamlit as st
@@ -14,7 +15,7 @@ def analyze_sentiments(events):
     
     # 准备批量情感分析请求
     prompt = f'''
-    根据下面这段话：
+    你是一个情绪情感分析的助手，严格按照下述的返回格式完成任务，根据下面这段话：
     {events}
     返回它的情感特征，如
     Positive返回1
