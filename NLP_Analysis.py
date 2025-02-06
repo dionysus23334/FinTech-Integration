@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 from data_collection.spider import SimpleSpider
 from data_collection.extract_info import extract_main_info
+import pandas as pd
 
 link = st.text_input("输入网站链接（URL）",value="https://www.cls.cn/")
 
