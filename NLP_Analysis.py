@@ -2,7 +2,7 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import streamlit as st
 from data_collection.spider import SimpleSpider
-from data_collection.extract_info import extract
+from data_collection.extract_info import extract_main_info
 
 link = st.text_input("输入网站链接（URL）",value="https://www.cls.cn/")
 
@@ -26,5 +26,17 @@ plot = generate_word_cloud(data_example['text'])
 plot.show()
 st.pyplot(plot)
 
+if data_example['text']:
+    # Step 1: 提取主体信息
+    events = extract_main_info(text_input)
 
+    # Step 2: 对每个事件进行情绪分析
+    data = []
+    for event in events:
+        sentiment = analyze_sentiment(event)
+        data.append({"简化内容": event, "情绪": sentiment})
+
+    # 转换为 DataFrame 并展示
+    df = pd.DataFrame(data)
+    st.dataframe(df)
 
