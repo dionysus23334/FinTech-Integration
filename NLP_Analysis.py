@@ -70,7 +70,7 @@ if text_input := data_example['text']:
     
     # Step 2: 对每个事件进行情绪分析
     sentiments = analyze_sentiments(events)
-    print(sentiments
+    print(sentiments)
     
     data = [{"简化内容": event, "情绪": sentiment_dict[sentiment]} for event, sentiment in zip(events, sentiments)]
 
