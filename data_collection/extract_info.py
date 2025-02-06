@@ -1,6 +1,8 @@
 
 from zhipuai import ZhipuAI
 
+api_key = "6dd4521590f14ea33d8288e5037c6215.aDsJWqIDbkt1Al8y"  # 请填写您自己的APIKey
+
 # 提取主体信息的提示词模板
 def extract_main_info(text):
     prompt = f'''
@@ -11,7 +13,7 @@ def extract_main_info(text):
     2. 事件2
     3. 事件3
     '''
-    client = ZhipuAI(api_key=self.api_key)  # 请用你的API Key替换这里
+    client = ZhipuAI(api_key)  # 请用你的API Key替换这里
     # 创建聊天完成请求
     response = client.chat.completions.create(
         model="glm-4",  # 使用的模型
