@@ -1,16 +1,14 @@
+
+
 import streamlit as st
-import pandas as pd
-from data_collection.spider import AutoSpider
+from data_collection.spider import FundFlowScraper
 
-spider = AutoSpider()
-df = spider.scrape_table_from_url()
+st.title("🧊 股票详情数据爬虫")
 
-# 页面标题
-st.title("股票详情数据展示")
+scraper = FundFlowScraper(page_size=50)
+df = scraper.scrape_all()
 
-# 展示表格（可交互）
 st.dataframe(df)
 
-# 也可以选择 st.table(df) 显示为静态表格
-# st.table(df)
-
+csv = df.to_csv(index=False).encode('utf-8-sig')
+st.download_button("下载 CSV", csv, "资金流.csv", "text/csv", key='download-csv')
