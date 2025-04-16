@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 from data_collection.spider import AutoSpider
 
-spider = AutoSpider().scrape_table_from_url()
-df = spider.get_dataframe()
+spider = AutoSpider()
+df = spider.scrape_table_from_url()
 
 # 页面标题
 st.title("股票详情数据展示")
