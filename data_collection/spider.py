@@ -5,6 +5,7 @@ import json
 from fake_useragent import UserAgent
 from urllib.parse import urljoin
 import time
+from selenium import webdriver
 
 class SimpleSpider:
 
@@ -55,6 +56,69 @@ class SimpleSpider:
         }
         
         return data
+
+class SeleniumAutoSpider:
+
+    def __init__(self):
+        # 启动浏览器（可设置为无头）
+        self.driver = webdriver.Edge()
+        # 访问目标网站
+        url = 'https://data.eastmoney.com/zjlx/list.html'
+        self.driver.get(url)
+        # 等待某个关键元素出现，说明数据已加载（例如等“涨幅”字段不再是“-”）
+        time.sleep(5)
+        # 提取表格 HTML
+        html = self.driver.page_source
+        # 用 BeautifulSoup 解析 HTML
+        soup = BeautifulSoup(html, "html.parser")
+        # 找到 class 为 dataview-body 的容器
+        container = soup.find("div", class_="dataview-body")
+        # 在其中找 table 标签
+        table = container.find("table")
+        stock_data = {}
+        for row in table.find_all('tr')[2:]:  # 前两行为表头
+            cells = row.find_all('td')
+            if len(cells) < 15:
+                continue
+            
+            stock_code = cells[1].get_text(strip=True)
+        
+        
+            for cell in cells:
+                a = cell.find('a')
+                if a and a.get('href'):
+                    data = {}
+                    text = a.get_text(strip=True)
+                    href = a['href']
+                    if text == '详情':
+                        data[text] = "https://data.eastmoney.com" + href       
+                        break  
+        
+            stock_data[stock_code] = {
+                "序号": cells[0].get_text(strip=True),
+                "代码": stock_code,
+                "名称": cells[2].get_text(strip=True),
+                "相关资讯": data,
+                "最新价": cells[4].get_text(strip=True),
+                "今日主力净占比": cells[5].get_text(strip=True),
+                "今日排名": cells[6].get_text(strip=True),
+                "今日涨跌": cells[7].get_text(strip=True),
+                "5日主力净占比": cells[8].get_text(strip=True),
+                "5日排名": cells[9].get_text(strip=True),
+                "5日涨跌": cells[10].get_text(strip=True),
+                "10日主力净占比": cells[11].get_text(strip=True),
+                "10日排名": cells[12].get_text(strip=True),
+                "10日涨跌": cells[13].get_text(strip=True),
+                "所属板块": cells[14].get_text(strip=True),
+            }
+        self.stock_data = stock_data
+
+    def get_dataframe(self):
+
+        self.stock_data = pd.DataFrame(self.stock_data).T
+        
+        return self.stock_data
+
 
 # 示例用法
 if __name__ == "__main__":
