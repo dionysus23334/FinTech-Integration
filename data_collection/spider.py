@@ -71,6 +71,7 @@ class AutoSpider:
         # self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
         self.ua = UserAgent()
+        self.stock_data = None
 
     def get_random_headers(self):
         return {'User-Agent': self.ua.random}
@@ -122,8 +123,6 @@ class AutoSpider:
                 "所属板块": cells[14].get_text(strip=True),
             }
         self.stock_data = stock_data
-
-    def get_dataframe(self):
 
         self.stock_data = pd.DataFrame(self.stock_data).T
         
