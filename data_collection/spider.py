@@ -66,19 +66,21 @@ class AutoSpider:
 
     def __init__(self):
         # 启动浏览器（可设置为无头）
-        # streamlit 线上部署没有Edge要用Chrome
+        # streamlit 线上部署没有Edge、Chrome
         # self.driver = webdriver.Edge()
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        # self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
-        # 访问目标网站
-        url = 'https://data.eastmoney.com/zjlx/list.html'
-        self.driver.get(url)
-        # 等待某个关键元素出现，说明数据已加载（例如等“涨幅”字段不再是“-”）
-        time.sleep(5)
-        # 提取表格 HTML
-        html = self.driver.page_source
-        # 用 BeautifulSoup 解析 HTML
-        soup = BeautifulSoup(html, "html.parser")
+        self.ua = UserAgent()
+
+    def get_random_headers(self):
+        return {'User-Agent': self.ua.random}
+
+    def scrape_table_from_url(self, url='https://data.eastmoney.com/zjlx/list.html'):
+        headers = self.get_random_headers()
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.content, 'html.parser')
+
         # 找到 class 为 dataview-body 的容器
         container = soup.find("div", class_="dataview-body")
         # 在其中找 table 标签
