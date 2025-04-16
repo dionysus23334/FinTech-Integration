@@ -6,6 +6,7 @@ from fake_useragent import UserAgent
 from urllib.parse import urljoin
 import time
 from selenium import webdriver
+import math
 
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -62,71 +63,75 @@ class SimpleSpider:
         
         return data
 
-class AutoSpider:
+# fundflow_scraper.py
 
-    def __init__(self):
-        # 启动浏览器（可设置为无头）
-        # streamlit 线上部署没有Edge、Chrome
-        # self.driver = webdriver.Edge()
-        # self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
+class FundFlowScraper:
+    def __init__(self, page_size=50, sleep_sec=0.5):
         self.ua = UserAgent()
-        self.stock_data = None
+        self.page_size = page_size
+        self.sleep_sec = sleep_sec
+        self.base_url = "https://push2.eastmoney.com/api/qt/clist/get"
+        self.params = {
+            "fid": "f184",
+            "po": "1",
+            "pz": str(page_size),
+            "pn": "1",
+            "np": "1",
+            "fltt": "2",
+            "invt": "2",
+            "ut": "8dec03ba335b81bf4ebdf7b29ec27d15",
+            "fs": "m:0+t:6+f:!2,m:0+t:13+f:!2,m:0+t:80+f:!2,m:1+t:2+f:!2,m:1+t:23+f:!2,m:0+t:7+f:!2,m:1+t:3+f:!2",
+            "fields": "f2,f3,f12,f14,f62,f184,f225,f109,f160,f124,f100,f1"
+        }
+        self.headers = {
+            "User-Agent": self.ua.random,
+            "Referer": "https://data.eastmoney.com/zjlx/list.html"
+        }
+        self.field_map = {
+            "f2": "最新价",
+            "f3": "涨跌幅",
+            "f12": "股票代码",
+            "f14": "股票名称",
+            "f62": "主力净流入",
+            "f184": "主力净占比",
+            "f225": "超大单净流入",
+            "f109": "所属板块",
+            "f160": "涨速",
+            "f124": "量比",
+            "f100": "换手率",
+            "f1": "序号"
+        }
 
-    def get_random_headers(self):
-        return {'User-Agent': self.ua.random}
+    def _get_total_pages(self):
+        res = requests.get(self.base_url, params=self.params, headers=self.headers)
+        res_json = res.json()
+        total = res_json['data']['total']
+        pages = math.ceil(total / self.page_size)
+        return total, pages
 
-    def scrape_table_from_url(self, url='https://data.eastmoney.com/zjlx/list.html'):
-        headers = self.get_random_headers()
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.content, 'html.parser')
+    def scrape_all(self):
+        total, pages = self._get_total_pages()
+        print(f"共 {total} 条数据，{pages} 页，每页 {self.page_size} 条")
+        all_data = []
 
-        # 找到 class 为 dataview-body 的容器
-        container = soup.find("div", class_="dataview-body")
-        # 在其中找 table 标签
-        table = container.find("table")
-        stock_data = {}
-        for row in table.find_all('tr')[2:]:  # 前两行为表头
-            cells = row.find_all('td')
-            if len(cells) < 15:
-                continue
-            
-            stock_code = cells[1].get_text(strip=True)
-        
-        
-            for cell in cells:
-                a = cell.find('a')
-                if a and a.get('href'):
-                    data = {}
-                    text = a.get_text(strip=True)
-                    href = a['href']
-                    if text == '详情':
-                        data[text] = "https://data.eastmoney.com" + href       
-                        break  
-        
-            stock_data[stock_code] = {
-                "序号": cells[0].get_text(strip=True),
-                "代码": stock_code,
-                "名称": cells[2].get_text(strip=True),
-                "相关资讯": data,
-                "最新价": cells[4].get_text(strip=True),
-                "今日主力净占比": cells[5].get_text(strip=True),
-                "今日排名": cells[6].get_text(strip=True),
-                "今日涨跌": cells[7].get_text(strip=True),
-                "5日主力净占比": cells[8].get_text(strip=True),
-                "5日排名": cells[9].get_text(strip=True),
-                "5日涨跌": cells[10].get_text(strip=True),
-                "10日主力净占比": cells[11].get_text(strip=True),
-                "10日排名": cells[12].get_text(strip=True),
-                "10日涨跌": cells[13].get_text(strip=True),
-                "所属板块": cells[14].get_text(strip=True),
-            }
-        self.stock_data = stock_data
+        for page in range(1, pages + 1):
+            print(f"抓取第 {page} 页...")
+            self.params['pn'] = str(page)
+            res = requests.get(self.base_url, params=self.params, headers=self.headers)
+            res_json = res.json()
+            data = res_json['data']['diff']
+            all_data.extend(data)
+            time.sleep(self.sleep_sec)
 
-        self.stock_data = pd.DataFrame(self.stock_data).T
-        
-        return self.stock_data
+        df = pd.DataFrame(all_data)
+        df = df.rename(columns=self.field_map)
+        return df
+
+    def save_csv(self, df: pd.DataFrame, filename="资金流.csv"):
+        df.to_csv(filename, index=False, encoding='utf-8-sig')
+        print(f"数据已保存到 {filename}")
+
 
 
 # 示例用法
