@@ -62,7 +62,7 @@ class SimpleSpider:
         
         return data
 
-class SeleniumAutoSpider:
+class AutoSpider:
 
     def __init__(self):
         # 启动浏览器（可设置为无头）
