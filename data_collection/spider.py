@@ -7,6 +7,11 @@ from urllib.parse import urljoin
 import time
 from selenium import webdriver
 
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+
+
 class SimpleSpider:
 
     def __init__(self):
@@ -61,7 +66,10 @@ class SeleniumAutoSpider:
 
     def __init__(self):
         # 启动浏览器（可设置为无头）
-        self.driver = webdriver.Edge()
+        # streamlit 线上部署没有Edge要用Chrome
+        # self.driver = webdriver.Edge()
+        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+
         # 访问目标网站
         url = 'https://data.eastmoney.com/zjlx/list.html'
         self.driver.get(url)
