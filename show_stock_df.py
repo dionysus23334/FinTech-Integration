@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from data_collection.spider import SeleniumAutoSpider
+from data_collection.spider import AutoSpider
 
 spider = SeleniumAutoSpider()
 df = spider.get_dataframe()
