@@ -33,31 +33,33 @@ if uploaded_file:
     for metric in selected_metrics:
         stock_df[metric] = pd.to_numeric(stock_df[metric], errors="coerce")
 
-    # 画图
+        # 画图
     fig = go.Figure()
     yaxis_count = 1
-    yaxis_config = {}
+    layout_yaxes = {}
 
     colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#9467bd", "#d62728"]
 
     for i, metric in enumerate(selected_metrics):
-        yaxis_name = "y" if yaxis_count == 1 else f"y{yaxis_count}"
+        yaxis_name = "yaxis" if yaxis_count == 1 else f"yaxis{yaxis_count}"
+        yref = "y" if yaxis_count == 1 else f"y{yaxis_count}"
+
         fig.add_trace(go.Scatter(
             x=stock_df["日期"],
             y=stock_df[metric],
             mode="lines+markers",
             name=metric,
-            yaxis=yaxis_name,
+            yaxis=yref,
             line=dict(color=colors[i % len(colors)])
         ))
 
-        # 动态添加 y 轴
-        yaxis_config[yaxis_name] = dict(
+        layout_yaxes[yaxis_name] = dict(
             title=metric,
             overlaying="y" if yaxis_count > 1 else None,
             side="right" if yaxis_count % 2 == 0 else "left",
-            position=1.0 - 0.05 * yaxis_count if yaxis_count > 1 else None,
+            position=1.0 - 0.05 * (yaxis_count - 1) if yaxis_count > 1 else None
         )
+
         yaxis_count += 1
 
     fig.update_layout(
@@ -65,7 +67,8 @@ if uploaded_file:
         xaxis=dict(title="日期"),
         height=600,
         width=1000,
-        **yaxis_config
+        **layout_yaxes
     )
+
 
     st.plotly_chart(fig, use_container_width=True)
