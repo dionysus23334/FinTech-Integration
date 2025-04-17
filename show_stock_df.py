@@ -124,8 +124,9 @@ if uploaded_file is not None:
 
     for i in range(1, len(stock_df) + 1):
         new_row = pd.DataFrame(
-            {"收盘价": [stock_df.loc[i - 1, "收盘价"]]},
-            index=[stock_df.loc[i - 1, "日期"]]
+            {"收盘价": [stock_df.iloc[i - 1]["收盘价"]]},
+            index=[stock_df.iloc[i - 1]["日期"]]
+
         )
         chart.add_rows(new_row)
         progress_bar.progress(i / len(stock_df))
