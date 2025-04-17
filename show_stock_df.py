@@ -122,7 +122,7 @@ if uploaded_file is not None:
     chart_data = pd.DataFrame(columns=["收盘价"])
     chart = st.line_chart(chart_data)
 
-    for i in range(1, len(stock_df) + 1):
+    for i in range(2, len(stock_df) + 1):
         new_row = pd.DataFrame(
             {"收盘价": [stock_df.iloc[i - 1]["收盘价"]]},
             index=[stock_df.iloc[i - 1]["日期"]]
