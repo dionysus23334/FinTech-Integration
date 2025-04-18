@@ -151,8 +151,8 @@ if uploaded_file is not None:
     
     # 应用二次排序
     top_df = top_df.sort_values(
-        by=[sort_column, secondary_sort_column],
-        ascending=[ascending, secondary_ascending]
+        by=secondary_sort_column,
+        ascending=secondary_ascending
     ).reset_index(drop=True)
     st.markdown(f"### 📈 按 **{secondary_sort_column}** 二次排序的100只股票")    
     st.dataframe(top_df.style.background_gradient(axis=0, cmap="Blues"), use_container_width=True)
