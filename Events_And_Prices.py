@@ -30,7 +30,6 @@ if events_file and prices_file:
     
     st.dataframe(events_df)
     stock_events = events_df
-    st.dataframe(stock_events)
     
     # Altair brush 选择器
     brush = alt.selection(type='interval', encodings=['x'])
