@@ -128,49 +128,62 @@ if events_file and prices_file:
 
 
     
-    # 生成编号
+    # 给公告事件编号
     stock_events = stock_events.reset_index(drop=True)
     stock_events['事件编号'] = stock_events.index + 1
-    
+
     # brush：交互式时间选择器
     brush = alt.selection_interval(encodings=["x"])
-    
-    # 折线图（收盘价）
-    price_line = alt.Chart(df).mark_line(color='steelblue').encode(
+
+    # 收盘价折线图
+    price_line = alt.Chart(price_data).mark_line(color='steelblue').encode(
         x='日期:T',
         y='收盘价:Q',
         tooltip=['日期:T', '收盘价:Q']
     )
-    
+
     # 公告事件竖线
     event_lines = alt.Chart(stock_events).mark_rule(color='red').encode(
         x='公告日期:T',
         tooltip=['事件编号:N', '公告标题:N']
     )
-    
-    # 公告事件编号（数字标签）
+
+    # 公告事件编号
     event_labels = alt.Chart(stock_events).mark_text(
         align='left',
-        dy=-70,
+        dy=-60,
         dx=3,
         fontSize=12,
         color='red'
     ).encode(
         x='公告日期:T',
-        y=alt.value(df['收盘价'].max() * 1.02),
+        y=alt.value(price_data['收盘价'].max() * 1.02),
         text='事件编号:N'
     )
-    
-    # 合并为一个图
-    combined_chart = (price_line + event_lines + event_labels).properties(
-        width=800,
+
+    # 组合图表
+    chart = (price_line + event_lines + event_labels).properties(
+        width=850,
         height=400,
         title=f"{selected_code} 收盘价 + 公告事件"
     ).add_selection(
         brush
     )
-    
+
     # 展示图表
-    st.altair_chart(combined_chart, use_container_width=True)
+    st.altair_chart(chart, use_container_width=True)
 
+    # 获取 brush 时间范围（Streamlit 无法直接读 brush，因此用手动方式）
+    st.subheader("📌 手动选择时间段以查看公告事件")
+    start_date = st.date_input("开始日期", value=price_data['日期'].min().date())
+    end_date = st.date_input("结束日期", value=price_data['日期'].max().date())
 
+    if start_date and end_date:
+        mask = (stock_events['公告日期'].dt.date >= start_date) & (stock_events['公告日期'].dt.date <= end_date)
+        selected_events = stock_events[mask]
+
+        st.markdown("### 🔍 区间内公告事件")
+        if not selected_events.empty:
+            st.dataframe(selected_events[['事件编号', '公告日期', '公告标题', '公告类型', '公告PDF链接']])
+        else:
+            st.info("该时间段内没有公告事件。")
