@@ -173,8 +173,6 @@ if events_file and prices_file:
 
 
 
-    st.altair_chart(final_chart, use_container_width=True)
-
 
     # 为事件编号（从1开始）
     stock_events = stock_events.reset_index(drop=True)
@@ -213,6 +211,8 @@ if events_file and prices_file:
     )
     
     # 显示图表
+
+    st.altair_chart(final_chart, use_container_width=True)
 
 
 
