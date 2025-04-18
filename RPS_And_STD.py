@@ -128,3 +128,29 @@ if uploaded_file is not None:
 
     st.markdown(f"### 📈 按 **{sort_column}** 排序的前100只股票")
     st.dataframe(top_df.style.background_gradient(axis=0, cmap="Blues"), use_container_width=True)
+
+
+    st.markdown("---")
+    st.markdown("### 🔁 二次排序设置（可选）")
+    
+    # 二次排序字段选择
+    secondary_sort_column = st.selectbox(
+        "🔂 选择二次排序依据", 
+        result_df.columns.difference(["股票代码"]).tolist(), 
+        key="secondary_sort_column_select"
+    )
+    
+    # 二次排序顺序选择
+    secondary_sort_order = st.radio(
+        "⬇️ 二次排序顺序", 
+        ["降序（从大到小）", "升序（从小到大）"], 
+        horizontal=True,
+        key="secondary_sort_order_radio"
+    )
+    secondary_ascending = secondary_sort_order == "升序（从小到大）"
+    
+    # 应用二次排序
+    top_df = top_df.sort_values(
+        by=[sort_column, secondary_sort_column],
+        ascending=[ascending, secondary_ascending]
+    ).reset_index(drop=True)
