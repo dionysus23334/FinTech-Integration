@@ -68,7 +68,7 @@ if uploaded_file is not None:
     # 侧边栏设置
     vol_period = st.sidebar.selectbox(
         "选择波动率计算周期（天）", 
-        [30, 60, 90], 
+        [10, 20, 30, 40, 50, 60, 70, 80, 90], 
         index=2,
         key="vol_period_select"
     )
