@@ -24,7 +24,7 @@ if uploaded_file is not None:
     stock_df = df[df["股票代码"] == selected_stock]
 
     # 选择图表类型
-    chart_type = st.selectbox("选择图表类型", ["折线图（多指标）", "柱状图（成交额）", "饼图（某日成交量占比）"])
+    chart_type = st.selectbox("选择图表类型", ["折线图（多指标）", "柱状图（成交额）"])
 
     if chart_type == "折线图（多指标）":
         available_metrics = [col for col in stock_df.columns if col not in ["日期", "股票代码"]]
