@@ -1,54 +1,73 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+import altair as alt
 
-# 设置中文显示
-plt.rcParams['font.sans-serif'] = ['SimHei']  # 黑体
-plt.rcParams['axes.unicode_minus'] = False    # 正负号
-
-st.title("📈 公告事件与股价分析图")
+st.title("📈 公告事件与收盘价（Altair 交互式图表）")
 
 # 上传文件
-events_file = st.file_uploader("上传公告文件（如 600519Events.csv）", type=["csv"])
-prices_file = st.file_uploader("上传价格文件（如 股票K线数据_90天.csv）", type=["csv"])
+events_file = st.file_uploader("📄 上传公告数据 CSV", type=["csv"])
+prices_file = st.file_uploader("📊 上传股票价格数据 CSV", type=["csv"])
 
 if events_file and prices_file:
-    # 读取 CSV
+    # 加载数据
     events_df = pd.read_csv(events_file)
-    df = pd.read_csv(prices_file)
+    prices_df = pd.read_csv(prices_file)
 
-    # 处理股票代码
-    df['股票代码'] = df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True)
-    df['股票代码'] = df['股票代码'].astype(str).str.zfill(6)  # 保证6位，不足前补0
+    # 股票代码清洗为6位字符串
+    prices_df['股票代码'] = prices_df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True).str.zfill(6)
 
-    # 用户选择股票代码
-    stock_codes = df['股票代码'].unique()
-    selected_code = st.selectbox("选择股票代码", stock_codes)
+    # 选择要展示的股票
+    stock_codes = prices_df['股票代码'].unique()
+    selected_code = st.selectbox("请选择股票代码", stock_codes)
 
-    prices_df = df[df['股票代码'] == selected_code]
+    # 筛选并处理日期
+    df = prices_df[prices_df['股票代码'] == selected_code].copy()
+    df['日期'] = pd.to_datetime(df['日期'])
+    events_df['公告日期'] = pd.to_datetime(events_df['公告日期'])
 
-    # 日期格式处理
-    events_df['公告日期'] = pd.to_datetime(events_df['公告日期'], errors='coerce')
-    prices_df['日期'] = pd.to_datetime(prices_df['日期'], errors='coerce')
+    # 过滤出该股票的事件
+    stock_events = events_df[events_df['股票代码'] == selected_code].copy()
 
-    # 按日期排序
-    prices_df = prices_df.sort_values(by='日期')
+    # Altair brush 选择器
+    brush = alt.selection(type='interval', encodings=['x'])
 
-    # 画图逻辑
-    fig, ax = plt.subplots(figsize=(14, 6))
-    ax.plot(prices_df['日期'], prices_df['收盘价'], label='收盘价', color='blue')
+    # 收盘价折线图 + brush
+    price_line = alt.Chart(df).mark_line(color='steelblue').encode(
+        x='日期:T',
+        y='收盘价:Q',
+        tooltip=['日期:T', '收盘价:Q']
+    ).properties(
+        width=800,
+        height=300,
+        title=f'{selected_code} 收盘价走势（可框选时间）'
+    ).add_selection(
+        brush
+    )
 
-    for idx, row in events_df.iterrows():
-        event_date = row['公告日期']
-        if pd.notnull(event_date) and event_date in prices_df['日期'].values:
-            price = prices_df.loc[prices_df['日期'] == event_date, '收盘价'].values[0]
-            ax.scatter(event_date, price, color='red', s=80, zorder=5)
-            ax.text(event_date, price + 0.1, row['公告标题'], fontsize=8, rotation=45)
+    # 公告事件点图
+    event_points = alt.Chart(stock_events).mark_circle(color='red', size=80).encode(
+        x='公告日期:T',
+        y=alt.value(df['收盘价'].max() * 1.02),  # 放在图上方
+        tooltip=['公告日期:T', '公告标题:N']
+    )
 
-    ax.set_title(f'股票代码 {selected_code}：收盘价与公告事件')
-    ax.set_xlabel('日期')
-    ax.set_ylabel('收盘价')
-    ax.legend()
-    ax.grid(True)
+    # 合并两图
+    chart = (price_line + event_points).interactive()
+    st.altair_chart(chart)
 
-    st.pyplot(fig)
+    # 显示被选中的时间段内的事件
+    st.subheader("📌 所选时间段内的公告事件")
+    selected = alt.Chart(df).transform_filter(brush)
+
+    # 获取 brush 所选时间段（Streamlit 无法直接从 Altair 获取 brush，需用 workaround）
+    # 这里暂时手动选择日期范围
+    start_date = st.date_input("开始日期", value=df['日期'].min().date())
+    end_date = st.date_input("结束日期", value=df['日期'].max().date())
+
+    if start_date and end_date:
+        mask = (stock_events['公告日期'].dt.date >= start_date) & (stock_events['公告日期'].dt.date <= end_date)
+        selected_events = stock_events[mask]
+        if not selected_events.empty:
+            st.dataframe(selected_events[['公告日期', '公告标题', '公告类型', '公告PDF链接']])
+        else:
+            st.info("该时间段内没有公告事件。")
