@@ -161,7 +161,7 @@ if events_file and prices_file:
             y=alt.Y(f'{col}:Q', title='数值'),
             color=alt.value('steelblue'),
             tooltip=['日期:T', alt.Tooltip(f'{col}:Q', title=col)]
-        ).properties(title=None)
+        ).properties()
         # 为不同列区分颜色
         line = line.encode(color=alt.value(alt.Scale(scheme='category10').range()[value_columns.index(col) % 10]))
         lines.append(line)
