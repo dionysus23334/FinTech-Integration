@@ -26,7 +26,7 @@ if events_file and prices_file:
     events_df['公告日期'] = pd.to_datetime(events_df['公告日期'])
 
     # 过滤出该股票的事件
-    stock_events = events_df[events_df['股票代码'] == selected_code].copy()
+    # stock_events = events_df[events_df['股票代码'] == selected_code].copy()
     
     st.dataframe(stock_events)
     
