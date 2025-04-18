@@ -12,7 +12,6 @@ if events_file and prices_file:
 
     prices_df = pd.read_csv(prices_file)
     events_df = pd.read_csv(events_file).drop(columns=['Unnamed: 0'])
-    events_df['股票代码'] = events_df['股票代码'].astype(str)
     
     # 股票代码清洗为6位字符串
     prices_df['股票代码'] = prices_df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True).str.zfill(6)
@@ -68,52 +67,52 @@ if events_file and prices_file:
     start_date = st.date_input("开始日期", value=df['日期'].min().date())
     end_date = st.date_input("结束日期", value=df['日期'].max().date())
 
-
-
-    
-    
-        
-    # 生成编号
+    if start_date and end_date:
+        mask = (stock_events['公告日期'].dt.date >= start_date) & (stock_events['公告日期'].dt.date <= end_date)
+        selected_events = stock_events[mask]
+        if not selected_events.empty:
+            st.dataframe(selected_events[['公告日期', '公告标题', '公告类型', '公告PDF链接']])
+        else:
+            st.info("该时间段内没有公告事件。")
+            
+    # 为事件编号（从1开始）
     stock_events = stock_events.reset_index(drop=True)
     stock_events['事件编号'] = stock_events.index + 1
     
-    # brush：交互式时间选择器
-    brush = alt.selection_interval(encodings=["x"])
-    
-    # 折线图（收盘价）
-    price_line = alt.Chart(df).mark_line(color='steelblue').encode(
-        x='日期:T',
-        y='收盘价:Q',
-        tooltip=['日期:T', '收盘价:Q']
-    )
-    
-    # 公告事件竖线
+    # 事件竖线图（rule）
     event_lines = alt.Chart(stock_events).mark_rule(color='red').encode(
         x='公告日期:T',
         tooltip=['事件编号:N', '公告标题:N']
+    ).properties(
+        width=800,
+        height=60
     )
     
-    # 公告事件编号（数字标签）
+    # 编号文字图
     event_labels = alt.Chart(stock_events).mark_text(
-        align='left',
-        dy=-70,
-        dx=3,
+        align='center',
+        dy=-5,
         fontSize=12,
-        color='red'
+        color='black'
     ).encode(
         x='公告日期:T',
-        y=alt.value(df['收盘价'].max() * 1.02),
         text='事件编号:N'
     )
     
-    # 合并为一个图
-    combined_chart = (price_line + event_lines + event_labels).properties(
-        width=800,
-        height=400,
-        title=f"{selected_code} 收盘价 + 公告事件"
-    ).add_selection(
-        brush
+    # 合并事件线和编号
+    event_timeline = (event_lines + event_labels).resolve_scale(y='independent')
+    
+    # 上图：收盘价 + 点图
+    chart = (price_line + event_points).interactive()
+    
+    # 总图表组合（上下堆叠）
+    final_chart = alt.vconcat(
+        chart,
+        event_timeline
+    ).configure_title(
+        fontSize=16,
+        anchor='start'
     )
     
-    # 展示图表
-    st.altair_chart(combined_chart, use_container_width=True)
+    # 显示图表
+    st.altair_chart(final_chart, use_container_width=True)
