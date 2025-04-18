@@ -7,3 +7,4 @@ zhipuai
 selenium
 webdriver_manager
 plotly
+scipy
