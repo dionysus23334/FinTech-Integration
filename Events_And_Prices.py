@@ -9,9 +9,10 @@ events_file = st.file_uploader("📄 上传公告数据 CSV", type=["csv"])
 prices_file = st.file_uploader("📊 上传股票价格数据 CSV", type=["csv"])
 
 if events_file and prices_file:
+    
     # 加载数据
-    events_df = pd.read_csv(events_file)
-    prices_df = pd.read_csv(prices_file)
+    events_df = pd.read_csv(events_file).drop(columns=lambda c: c.startswith("Unnamed"))
+    prices_df = pd.read_csv(prices_file).drop(columns=lambda c: c.startswith("Unnamed"))
 
     # 股票代码清洗为6位字符串
     prices_df['股票代码'] = prices_df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True).str.zfill(6)
