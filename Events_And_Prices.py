@@ -140,30 +140,27 @@ if events_file and prices_file:
 
 
 
-
-
-
-
-
-
-
-
-
     # 可视化字段选择（只列出数值型列，排除“股票代码”等）
     numeric_columns = df.select_dtypes(include='number').columns.tolist()
     value_columns = st.multiselect("📊 请选择要可视化的字段（支持多选）", numeric_columns, default=['收盘价'])
     
+    # 颜色列表
+    color_palette = [
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
+        '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
+        '#bcbd22', '#17becf'
+    ]
+    
     # 构造多列折线图
     lines = []
-    for col in value_columns:
+    for i, col in enumerate(value_columns):
+        color = color_palette[i % len(color_palette)]
         line = alt.Chart(df).mark_line().encode(
             x='日期:T',
             y=alt.Y(f'{col}:Q', title='数值'),
-            color=alt.value('steelblue'),
+            color=alt.value(color),
             tooltip=['日期:T', alt.Tooltip(f'{col}:Q', title=col)]
         ).properties()
-        # 为不同列区分颜色
-        line = line.encode(color=alt.value(alt.Scale(scheme='category10').range()[value_columns.index(col) % 10]))
         lines.append(line)
     
     # 合并所有折线
@@ -172,6 +169,10 @@ if events_file and prices_file:
         height=300,
         title=f'{selected_code} 股票数值走势（多字段）'
     )
+
+
+
+
     st.altair_chart(final_chart, use_container_width=True)
 
 
