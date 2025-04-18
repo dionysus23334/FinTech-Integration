@@ -83,32 +83,29 @@ if events_file and prices_file:
     event_lines = alt.Chart(stock_events).mark_rule(color='red').encode(
         x='公告日期:T',
         tooltip=['事件编号:N', '公告标题:N']
-    ).properties(
-        width=800,
-        height=60
     )
     
-    # 编号文字图
+    # 编号文字图，放在收盘价最大值上方一点
     event_labels = alt.Chart(stock_events).mark_text(
         align='center',
-        dy=-5,
+        dy=-10,
         fontSize=12,
-        color='black'
+        color='red'
     ).encode(
         x='公告日期:T',
+        y=alt.value(df['收盘价'].max() * 1.03),  # 固定放在曲线上方
         text='事件编号:N'
     )
     
-    # 合并事件线和编号
-    event_timeline = (event_lines + event_labels).resolve_scale(y='independent')
-    
-    # 上图：收盘价 + 点图
-    chart = (price_line + event_points).interactive()
-    
-    # 总图表组合（上下堆叠）
-    final_chart = alt.vconcat(
-        chart,
-        event_timeline
+    # 将事件线和编号叠加到主图上
+    final_chart = (
+        price_line +
+        event_lines +
+        event_labels
+    ).interactive().properties(
+        width=800,
+        height=300,
+        title=f'{selected_code} 收盘价走势及公告事件（红线标注）'
     ).configure_title(
         fontSize=16,
         anchor='start'
@@ -116,3 +113,4 @@ if events_file and prices_file:
     
     # 显示图表
     st.altair_chart(final_chart, use_container_width=True)
+    
