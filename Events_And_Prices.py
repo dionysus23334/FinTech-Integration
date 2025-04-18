@@ -14,7 +14,7 @@ def drop_unnamed_columns(df):
 if events_file and prices_file:
     
     # 加载数据
-    events_df = = drop_unnamed_columns(pd.read_csv(events_file))
+    events_df = drop_unnamed_columns(pd.read_csv(events_file))
     prices_df = drop_unnamed_columns(pd.read_csv(prices_file))
 
     # 股票代码清洗为6位字符串
