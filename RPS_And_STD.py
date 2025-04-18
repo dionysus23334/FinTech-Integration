@@ -121,7 +121,14 @@ if uploaded_file is not None:
     # 提供所有列作为排序依据
     sort_column = st.selectbox("🔢 选择排序依据", result_df.columns.difference(["股票代码"]).tolist())
 
-    top_df = result_df.sort_values(sort_column, ascending=False).head(100).reset_index(drop=True)
+    # 提供所有列作为排序依据
+    sort_column = st.selectbox("🔢 选择排序依据", result_df.columns.difference(["股票代码"]).tolist())
+    
+    # 新增：排序顺序选择
+    sort_order = st.radio("📈 选择排序顺序", ["降序（从大到小）", "升序（从小到大）"], horizontal=True)
+    ascending = sort_order == "升序（从小到大）"
+    
+    top_df = result_df.sort_values(sort_column, ascending=ascending).head(100).reset_index(drop=True)
 
     st.markdown(f"### 📈 按 **{sort_column}** 排序的前100只股票")
     st.dataframe(top_df.style.background_gradient(axis=0, cmap="Blues"), use_container_width=True)
