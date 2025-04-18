@@ -12,6 +12,7 @@ if events_file and prices_file:
 
     prices_df = pd.read_csv(prices_file)
     events_df = pd.read_csv(events_file).drop(columns=['Unnamed: 0'])
+    events_df['股票代码'] = events_df['股票代码'].astype(str)
     
     # 股票代码清洗为6位字符串
     prices_df['股票代码'] = prices_df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True).str.zfill(6)
