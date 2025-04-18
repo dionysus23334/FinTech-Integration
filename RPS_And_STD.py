@@ -55,7 +55,9 @@ if uploaded_file is not None:
 
     # 数据预处理
     df["日期"] = pd.to_datetime(df["日期"])
-    df["股票代码"] = df["股票代码"].astype(str).str.extract(r'(\d{6})')  # 提取6位数字代码
+    # df["股票代码"] = df["股票代码"].astype(str).str.extract(r'(\d{6})')  # 提取6位数字代码
+    df['股票代码'] = df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True)
+    df['股票代码'] = df['股票代码'].astype(str).str.ljust(6, "0")
 
     required_cols = {"日期", "股票代码", "收盘价"}
     if not required_cols.issubset(df.columns):
