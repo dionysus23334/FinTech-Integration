@@ -128,6 +128,9 @@ if events_file and prices_file:
 
 
 
+    # 筛选选中股票的数据
+    price_data = prices_df[prices_df['股票代码'] == selected_code].copy()
+    stock_events = events_df[events_df['股票代码'] == selected_code].copy()
     
     # 给公告事件编号
     stock_events = stock_events.reset_index(drop=True)
