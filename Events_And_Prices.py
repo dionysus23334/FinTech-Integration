@@ -183,7 +183,7 @@ if events_file and prices_file:
     end_date = st.date_input("结束日期", value=price_data['日期'].max().date())
 
     if start_date and end_date:
-        mask = (stock_events['公告日期'].dt.date >= start_date) & (stock_events['公告日期'].dt.date <= end_date)
+        mask = (stock_events['公告日期'] >= start_date) & (stock_events['公告日期'] <= end_date)
         selected_events = stock_events[mask]
 
         st.markdown("### 🔍 区间内公告事件")
