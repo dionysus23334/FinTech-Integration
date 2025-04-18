@@ -82,20 +82,88 @@ if events_file and prices_file:
 
 
     
-        # 为事件编号（从1开始）
+    #     # 为事件编号（从1开始）
+    # stock_events = stock_events.reset_index(drop=True)
+    # stock_events['事件编号'] = stock_events.index + 1
+    
+    # # 事件竖线图（rule）
+    # event_lines = alt.Chart(stock_events).mark_rule(color='red').encode(
+    #     x='公告日期:T',
+    #     tooltip=['事件编号:N', '公告标题:N']
+    # ).properties(
+    #     width=800,
+    #     height=60
+    # )
+    
+    # # 编号文字图
+    # event_labels = alt.Chart(stock_events).mark_text(
+    #     align='center',
+    #     dy=-5,
+    #     fontSize=12,
+    #     color='black'
+    # ).encode(
+    #     x='公告日期:T',
+    #     text='事件编号:N'
+    # )
+    
+    # # 合并事件线和编号
+    # event_timeline = (event_lines + event_labels).resolve_scale(y='independent')
+    
+    # # 上图：收盘价 + 点图
+    # chart = (price_line + event_points).interactive()
+    
+    # # 总图表组合（上下堆叠）
+    # final_chart = alt.vconcat(
+    #     chart,
+    #     event_timeline
+    # ).configure_title(
+    #     fontSize=16,
+    #     anchor='start'
+    # )
+    
+    # # 显示图表
+    # st.altair_chart(final_chart, use_container_width=True)
+
+
+
+
+
+    # === brush 选择器（横轴共享）===
+    brush = alt.selection_interval(encodings=["x"])
+    
+    # === 收盘价折线图 + brush ===
+    price_line = alt.Chart(df).mark_line(color='steelblue').encode(
+        x='日期:T',
+        y='收盘价:Q',
+        tooltip=['日期:T', '收盘价:Q']
+    ).properties(
+        width=800,
+        height=300,
+        title=f'{selected_code} 收盘价走势'
+    ).add_selection(
+        brush
+    )
+    
+    # === 公告事件点图（在上方标注） ===
+    event_points = alt.Chart(stock_events).mark_circle(color='red', size=80).encode(
+        x='公告日期:T',
+        y=alt.value(df['收盘价'].max() * 1.02),  # 放在图上方
+        tooltip=['公告日期:T', '公告标题:N']
+    )
+    
+    # === 上半部分图（价格 + 点图）===
+    upper_chart = (price_line + event_points)
+    
+    # === 公告事件时间线图（下方）===
+    # 编号
     stock_events = stock_events.reset_index(drop=True)
     stock_events['事件编号'] = stock_events.index + 1
     
-    # 事件竖线图（rule）
     event_lines = alt.Chart(stock_events).mark_rule(color='red').encode(
         x='公告日期:T',
         tooltip=['事件编号:N', '公告标题:N']
-    ).properties(
-        width=800,
-        height=60
     )
     
-    # 编号文字图
     event_labels = alt.Chart(stock_events).mark_text(
         align='center',
         dy=-5,
@@ -106,22 +174,25 @@ if events_file and prices_file:
         text='事件编号:N'
     )
     
-    # 合并事件线和编号
-    event_timeline = (event_lines + event_labels).resolve_scale(y='independent')
-    
-    # 上图：收盘价 + 点图
-    chart = (price_line + event_points).interactive()
-    
-    # 总图表组合（上下堆叠）
-    final_chart = alt.vconcat(
-        chart,
-        event_timeline
-    ).configure_title(
-        fontSize=16,
-        anchor='start'
+    # 事件时间线图，加 brush（同步）
+    event_timeline = (event_lines + event_labels).properties(
+        width=800,
+        height=60,
+        title='📍 公告事件时间线'
+    ).add_selection(
+        brush
     )
     
-    # 显示图表
+    # === 拼接上下图，共享 x 轴 ===
+    final_chart = alt.vconcat(
+        upper_chart,
+        event_timeline
+    ).resolve_scale(
+        x='shared',  # 横轴共享（同步拖动）
+        y='independent'
+    )
+    
+    # === 展示最终图表 ===
     st.altair_chart(final_chart, use_container_width=True)
 
 
