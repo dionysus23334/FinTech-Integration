@@ -17,6 +17,9 @@ if uploaded_file is not None:
         st.error("文件中缺少 '日期' 列")
         st.stop()
 
+    df['股票代码'] = df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True)
+    df['股票代码'] = df['股票代码'].astype(str).str.ljust(6, "0")
+    
     # 股票代码列表
     stock_list = df["股票代码"].unique().tolist()
     selected_stock = st.selectbox("选择一个股票代码", stock_list)
