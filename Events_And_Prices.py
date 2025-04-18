@@ -8,17 +8,10 @@ st.title("📈 公告事件与收盘价（Altair 交互式图表）")
 events_file = st.file_uploader("📄 上传公告数据 CSV", type=["csv"])
 prices_file = st.file_uploader("📊 上传股票价格数据 CSV", type=["csv"])
 
-def drop_unnamed_columns(df):
-    return df.drop(columns=[col for col in df.columns if not col or pd.isna(col)])
-
 if events_file and prices_file:
 
-    
-    # 加载数据
-    events_df = drop_unnamed_columns(pd.read_csv(events_file))
-    prices_df = drop_unnamed_columns(pd.read_csv(prices_file))
-
-    events_df = events_df.drop(columns=['Unnamed: 0'])
+    prices_df = pd.read_csv(prices_file)
+    events_df = pd.read_csv(events_file).drop(columns=['Unnamed: 0'])
     
     # 股票代码清洗为6位字符串
     prices_df['股票代码'] = prices_df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True).str.zfill(6)
