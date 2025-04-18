@@ -112,5 +112,106 @@ if events_file and prices_file:
     )
     
     # 显示图表
-    st.altair_chart(final_chart, use_container_width=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # 可视化字段选择（只列出数值型列，排除“股票代码”等）
+    numeric_columns = df.select_dtypes(include='number').columns.tolist()
+    value_columns = st.multiselect("📊 请选择要可视化的字段（支持多选）", numeric_columns, default=['收盘价'])
     
+    # 构造多列折线图
+    lines = []
+    for col in value_columns:
+        line = alt.Chart(df).mark_line().encode(
+            x='日期:T',
+            y=alt.Y(f'{col}:Q', title='数值'),
+            color=alt.value('steelblue'),
+            tooltip=['日期:T', alt.Tooltip(f'{col}:Q', title=col)]
+        ).properties(title=None)
+        # 为不同列区分颜色
+        line = line.encode(color=alt.value(alt.Scale(scheme='category10').range()[value_columns.index(col) % 10]))
+        lines.append(line)
+    
+    # 合并所有折线
+    price_line = alt.layer(*lines).properties(
+        width=800,
+        height=300,
+        title=f'{selected_code} 股票数值走势（多字段）'
+    )
+    st.altair_chart(final_chart, use_container_width=True)
+
+
+    # 为事件编号（从1开始）
+    stock_events = stock_events.reset_index(drop=True)
+    stock_events['事件编号'] = stock_events.index + 1
+    
+    # 事件竖线图（rule）
+    event_lines = alt.Chart(stock_events).mark_rule(color='red').encode(
+        x='公告日期:T',
+        tooltip=['事件编号:N', '公告标题:N']
+    )
+    
+    # 编号文字图，放在收盘价最大值上方一点
+    event_labels = alt.Chart(stock_events).mark_text(
+        align='center',
+        dy=-10,
+        fontSize=12,
+        color='red'
+    ).encode(
+        x='公告日期:T',
+        y=alt.value(df['收盘价'].max() * 1.03),  # 固定放在曲线上方
+        text='事件编号:N'
+    )
+    
+    # 将事件线和编号叠加到主图上
+    final_chart = (
+        price_line +
+        event_lines +
+        event_labels
+    ).interactive().properties(
+        width=800,
+        height=300,
+        title=f'{selected_code} 收盘价走势及公告事件（红线标注）'
+    ).configure_title(
+        fontSize=16,
+        anchor='start'
+    )
+    
+    # 显示图表
+
+
+
