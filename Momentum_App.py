@@ -30,6 +30,7 @@ if uploaded_file:
     top_momentum = latest_df.sort_values('动量', ascending=False).head(top_k)
 
     st.subheader(f"📊 最近日期：{latest_date.date()}，动量排名前 {top_k} 的股票")
+    top_momentum = top_momentum.reset_index(drop=True)
     st.dataframe(top_momentum)
 
     # 可视化
