@@ -15,7 +15,7 @@ if uploaded_file:
 
     df = df.sort_values(['股票代码', '日期'])
 
-    N = st.slider("📅 选择动量观察窗口（天）", min_value=5, max_value=120, value=90, step=5)
+    N = st.slider("📅 选择动量观察窗口（天）", min_value=5, max_value=90, value=30, step=1)
 
     # 对每只股票分别计算 N 日动量
     df['动量基准价'] = df.groupby('股票代码')['收盘价'].shift(N)
