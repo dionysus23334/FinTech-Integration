@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-
+import altair as alt
 st.title("📈 动量策略分析 - 长格式数据")
 
 # 上传文件
@@ -33,7 +33,24 @@ if uploaded_file:
     top_momentum = top_momentum.reset_index(drop=True)
     st.dataframe(top_momentum)
 
-    # 可视化
-    # st.bar_chart(top_momentum.sort_values('动量', ascending=False).set_index('股票代码')['动量'])
-    top_momentum_sorted = top_momentum.sort_values('动量', ascending=False)
-    st.bar_chart(top_momentum_sorted.set_index('股票代码')['动量'])
+    # # 可视化
+    # # st.bar_chart(top_momentum.sort_values('动量', ascending=False).set_index('股票代码')['动量'])
+    # top_momentum_sorted = top_momentum.sort_values('动量', ascending=False)
+    # st.bar_chart(top_momentum_sorted.set_index('股票代码')['动量'])
+
+    
+    # 使用 Altair 绘制柱状图，按动量值降序排列
+    chart = alt.Chart(top_momentum).mark_bar().encode(
+        x=alt.X('股票代码:N', title='股票代码'),
+        y=alt.Y('动量:Q', title='动量'),
+        color='动量:Q',
+        tooltip=['股票代码', '动量']
+    ).properties(
+        width=800,
+        height=400
+    ).configure_axis(
+        labelAngle=45  # 如果标签过长，可以调整角度
+    )
+
+    # 显示 Altair 图表
+    st.altair_chart(chart, use_container_width=True)
