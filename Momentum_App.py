@@ -25,8 +25,8 @@ if uploaded_file:
     latest_date = df['日期'].max()
     latest_df = df[df['日期'] == latest_date][['股票代码', '动量']].dropna()
 
-    # 展示前10%动量
-    top_k = int(len(latest_df) * 0.1)
+    # 显示前100个动量排名
+    top_k = 100  # 固定为前100
     top_momentum = latest_df.sort_values('动量', ascending=False).head(top_k)
 
     st.subheader(f"📊 最近日期：{latest_date.date()}，动量排名前 {top_k} 的股票")
@@ -35,5 +35,3 @@ if uploaded_file:
 
     # 可视化
     st.bar_chart(top_momentum.sort_values('动量', ascending=False).set_index('股票代码')['动量'])
-
-
