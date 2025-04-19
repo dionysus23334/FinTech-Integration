@@ -34,4 +34,6 @@ if uploaded_file:
     st.dataframe(top_momentum)
 
     # 可视化
-    st.bar_chart(top_momentum.sort_values('动量', ascending=False).set_index('股票代码')['动量'])
+    # st.bar_chart(top_momentum.sort_values('动量', ascending=False).set_index('股票代码')['动量'])
+    top_momentum_sorted = top_momentum.sort_values('动量', ascending=False)
+    st.bar_chart(top_momentum_sorted.set_index('股票代码')['动量'])
