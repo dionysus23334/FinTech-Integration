@@ -9,6 +9,9 @@ uploaded_file = st.file_uploader("上传你的CSV文件（包含'日期'、'收�
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
     df['日期'] = pd.to_datetime(df['日期'])
+    df['股票代码'] = df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True)
+    df['股票代码'] = df['股票代码'].astype(str).str.ljust(6, "0")
+
     df = df.sort_values(['股票代码', '日期'])
 
     N = st.slider("📅 选择动量观察窗口（天）", min_value=5, max_value=120, value=90, step=5)
