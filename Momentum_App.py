@@ -1,59 +1,33 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 
-st.set_page_config(page_title="动量策略分析", layout="wide")
-
-st.title("📈 股票动量策略分析工具")
-st.markdown("本工具适配格式：包括多支股票的 `日期`、`收盘价`、`股票代码` 列，自动筛选近60日涨幅最强股票进行动量模拟。")
+st.title("📈 动量策略分析 - 长格式数据")
 
 # 上传文件
-uploaded_file = st.file_uploader("请上传包含多个股票的CSV文件", type=["csv"])
+uploaded_file = st.file_uploader("上传你的CSV文件（包含'日期'、'收盘价'、'股票代码'列）", type=['csv'])
 
-if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file, parse_dates=['日期'])
-    st.success("✅ 数据加载成功！")
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
+    df['日期'] = pd.to_datetime(df['日期'])
+    df = df.sort_values(['股票代码', '日期'])
 
-    # 显示原始数据样例
-    with st.expander("点击展开查看部分原始数据"):
-        st.dataframe(df.head(10))
+    N = st.slider("📅 选择动量观察窗口（天）", min_value=5, max_value=120, value=90, step=5)
 
-    # 只保留需要的列
-    df = df[['日期', '股票代码', '收盘价']]
+    # 对每只股票分别计算 N 日动量
+    df['动量基准价'] = df.groupby('股票代码')['收盘价'].shift(N)
+    df['动量'] = (df['收盘价'] - df['动量基准价']) / df['动量基准价']
 
-    # 透视表：宽格式，行是日期，列是股票代码，值是收盘价
-    price_df = df.pivot(index='日期', columns='股票代码', values='收盘价').sort_index()
+    # 提取最新日期每只股票的动量
+    latest_date = df['日期'].max()
+    latest_df = df[df['日期'] == latest_date][['股票代码', '动量']].dropna()
 
-    st.subheader("📊 数据概览（收盘价矩阵）")
-    st.dataframe(price_df.tail(10))
+    # 展示前10%动量
+    top_k = int(len(latest_df) * 0.1)
+    top_momentum = latest_df.sort_values('动量', ascending=False).head(top_k)
 
-    # 策略参数
-    lookback = st.slider("动量观察期（最近几天涨幅）", min_value=20, max_value=90, value=60)
-    top_n = st.slider("选择涨幅排名前 N 的股票", min_value=1, max_value=50, value=10)
+    st.subheader(f"📊 最近日期：{latest_date.date()}，动量排名前 {top_k} 的股票")
+    st.dataframe(top_momentum)
 
-    # 计算动量（过去lookback天的涨幅）
-    momentum = price_df.pct_change(periods=lookback).iloc[-1]
-    selected = momentum.dropna().sort_values(ascending=False).head(top_n).index.tolist()
-
-    st.subheader(f"🚀 当前动量Top{top_n}（观察期{lookback}天）")
-    st.dataframe(momentum[selected].sort_values(ascending=False).to_frame(name="涨幅"))
-
-    # 模拟从选中股票中等权买入后的收益情况
-    returns = price_df[selected].pct_change().dropna()
-    portfolio = (1 + returns).cumprod()
-
-    st.subheader("📈 动量策略组合净值走势")
-    st.line_chart(portfolio.mean(axis=1))
-
-    st.markdown("---")
-    st.markdown("🧠 策略说明：")
-    st.markdown(f"""
-    - 选股逻辑：选取最近 **{lookback} 天内涨幅最高** 的前 **{top_n}** 支股票。
-    - 仿真方法：等权重买入这些股票，计算组合的净值随时间的变化。
-    - 应用提示：可尝试不同时间窗口 & 股票数，优化策略参数。
-    """)
-
-else:
-    st.info("请上传包含多个股票历史的CSV文件。")
+    # 可视化
+    st.bar_chart(top_momentum.set_index('股票代码')['动量'])
 
