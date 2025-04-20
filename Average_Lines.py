@@ -117,7 +117,7 @@ if uploaded_file is not None:
 
     # 用户设置
     st.header("参数设置")
-    window_length = st.sslider("📆 连续收敛时间长度（天）", min_value=2, max_value=30, value=5)
+    window_length = st.slider("📆 连续收敛时间长度（天）", min_value=2, max_value=30, value=5)
     threshold = st.number_input("🎯 收敛强度阈值 P(t) <", value=0.5, step=0.1)
 
     # 计算 P(t)
