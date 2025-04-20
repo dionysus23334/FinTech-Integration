@@ -8,11 +8,11 @@ st.markdown("本工具适配格式：包括多支股票的 `日期`、`收盘价
 uploaded_file = st.file_uploader("上传你的CSV文件（包含'日期'、'收盘价'、'股票代码'列）", type=['csv'])
 
 if uploaded_file:
-    df = pd.read_csv(uploaded_file)
+    df = pd.read_csv(uploaded_file, dtype={'股票代码': str})
     df = df.reset_index(drop=True)
     df['日期'] = pd.to_datetime(df['日期'])
-    df['股票代码'] = df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True)
-    df['股票代码'] = df['股票代码'].astype(str).str.ljust(6, "0")
+    # df['股票代码'] = df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True)
+    # df['股票代码'] = df['股票代码'].astype(str).str.ljust(6, "0")
 
     df = df.sort_values(['股票代码', '日期'])
 
