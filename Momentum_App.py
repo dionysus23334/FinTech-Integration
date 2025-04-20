@@ -92,6 +92,18 @@ if uploaded_file:
     N = st.slider("📅 选择动量观察窗口（天）", min_value=5, max_value=90, value=30, step=1)
     # 动量排名数量 slider
     top_k = st.slider("🏆 选择展示动量排名前几的股票", min_value=10, max_value=300, value=100, step=10)
+
+    latest_date = df['日期'].max()
+    st.subheader(f"📊 最近日期：{latest_date.date()}，动量排名前 {top_k} 的股票")
+
+    m = MomentumApp(df)
+    top_momentum = m.get_top_momentum(N, top_k)
+    chart = m.get_bar_chart(width=800, height=400, labelAngle=45)
+    st.dataframe(top_momentum)
+
+    # 显示 Altair 图表
+    st.altair_chart(chart, use_container_width=True)
+    
     st.markdown("---")
     st.markdown("🧠 策略说明：")
     st.markdown(f"""
@@ -99,14 +111,3 @@ if uploaded_file:
     - 仿真方法：等权重买入这些股票，计算组合的净值随时间的变化。
     - 应用提示：可尝试不同时间窗口 & 股票数，优化策略参数。
     """)
-
-    latest_date = df['日期'].max()
-    st.subheader(f"📊 最近日期：{latest_date.date()}，动量排名前 {top_k} 的股票")
-
-    m = MomentumApp(df)
-    m.get_top_momentum(N, top_k)
-    chart = m.get_bar_chart(width=800, height=400, labelAngle=45)
-    st.dataframe(m.top_momentum)
-
-    # 显示 Altair 图表
-    st.altair_chart(chart, use_container_width=True)
