@@ -166,7 +166,6 @@ if uploaded_file is not None:
     st.subheader("📊 P(t) 及导数趋势")
     chart_data = stock_df.set_index("日期")[["P", "P_diff"]]
     chart_data['零线'] = 0.0
-    chart_data.set_index('日期', inplace=True)
 
 
     st.line_chart(chart_data)
