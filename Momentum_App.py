@@ -100,7 +100,7 @@ if uploaded_file:
     - 应用提示：可尝试不同时间窗口 & 股票数，优化策略参数。
     """)
 
-
+    latest_date = df['日期'].max()
     st.subheader(f"📊 最近日期：{latest_date.date()}，动量排名前 {top_k} 的股票")
     st.dataframe(top_momentum)
 
