@@ -5,6 +5,11 @@ class GeneralIndicator:
 
     def __init__(self, df: pd.DataFrame):
         
+        # df = pd.read_csv(uploaded_file, dtype={'股票代码': str})
+
+        # # 数据预处理
+        # df["日期"] = pd.to_datetime(df["日期"])
+        
         self.df = df
         # 设置周期参数
         self.periods = [10, 20, 30, 60, 90]
