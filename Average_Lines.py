@@ -105,10 +105,20 @@ if uploaded_file is not None:
     #     ax.set_title(f"股票 {selected_stock} 的 P(t) 及导数变化")
     #     ax.legend()
     #     st.pyplot(fig)
+
+
+
+    # 原来的：
+    # min_date = stock_df["日期"].min()
+    # max_date = stock_df["日期"].max()
+    
+    # 修改为：
+
+
     # 用户设置
     st.sidebar.header("参数设置")
-    window_length = st.sidebar.slider("📆 连续收敛时间长度（天）", min_value=2, max_value=30, value=5)
-    threshold = st.sidebar.number_input("🎯 收敛强度阈值 P(t) <", value=0.5, step=0.1)
+    window_length = st.sslider("📆 连续收敛时间长度（天）", min_value=2, max_value=30, value=5)
+    threshold = st.number_input("🎯 收敛强度阈值 P(t) <", value=0.5, step=0.1)
 
     # 计算 P(t)
     df = df.sort_values(["股票代码", "日期"])
@@ -137,9 +147,18 @@ if uploaded_file is not None:
     stock_df = df[df["股票代码"] == selected_code].copy()
 
     # 显示时间范围选择
-    min_date = stock_df["日期"].min()
-    max_date = stock_df["日期"].max()
-    start_date, end_date = st.slider("📅 选择可视化时间范围", min_value=min_date, max_value=max_date, value=(min_date, max_date))
+    min_date = stock_df["日期"].min().date()
+    max_date = stock_df["日期"].max().date()
+    start_date, end_date = st.slider(
+    "📅 选择可视化时间范围",
+    min_value=min_date,
+    max_value=max_date,
+    value=(min_date, max_date)
+    )
+
+    # 选完日期后再转换回 Timestamp 进行过滤
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
 
     stock_df = stock_df[(stock_df["日期"] >= start_date) & (stock_df["日期"] <= end_date)]
 
