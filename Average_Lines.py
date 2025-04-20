@@ -18,7 +18,7 @@ if uploaded_file is not None:
     st.success(f"✅ 数据加载成功，共 {df['股票代码'].nunique()} 支股票")
 
     # 股票选择
-    stock_list = sorted(df['股票代码'].unique())
+    stock_list = df['股票代码'].unique()
     selected_stock = st.selectbox("📌 请选择股票代码", stock_list)
 
     # 过滤所选股票
