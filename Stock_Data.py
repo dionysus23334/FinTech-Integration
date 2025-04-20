@@ -8,7 +8,7 @@ st.title("📈 股票数据可视化分析平台")
 
 uploaded_file = st.file_uploader("上传你的CSV文件", type=["csv"])
 if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
+    df = pd.read_csv(uploaded_file, dtype={'股票代码': str})
 
     # 日期转换
     if "日期" in df.columns:
@@ -17,8 +17,8 @@ if uploaded_file is not None:
         st.error("文件中缺少 '日期' 列")
         st.stop()
 
-    df['股票代码'] = df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True)
-    df['股票代码'] = df['股票代码'].astype(str).str.ljust(6, "0")
+    # df['股票代码'] = df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True)
+    # df['股票代码'] = df['股票代码'].astype(str).str.ljust(6, "0")
     
     # 股票代码列表
     stock_list = df["股票代码"].unique().tolist()
