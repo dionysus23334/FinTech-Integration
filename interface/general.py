@@ -9,7 +9,8 @@ class GeneralIndicator:
 
         # # 数据预处理
         # df["日期"] = pd.to_datetime(df["日期"])
-        
+
+        # 这里传入的df是做完日期转化处理的，即已经运行完上一行的代码了
         self.df = df
         # 设置周期参数
         self.periods = [10, 20, 30, 60, 90]
