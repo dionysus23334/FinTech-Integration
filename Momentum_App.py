@@ -2,7 +2,7 @@
 # import pandas as pd
 # import altair as alt
 
-from interface import MomentumApp
+from interface.momentum import MomentumApp
 
 st.title("📈 股票动量策略分析工具")
 st.markdown("本工具适配格式：包括多支股票的 `日期`、`收盘价`、`股票代码` 列，自动筛选近60日涨幅最强股票进行动量模拟。")
