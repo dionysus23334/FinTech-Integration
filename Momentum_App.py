@@ -102,11 +102,11 @@ if uploaded_file:
 
     latest_date = df['日期'].max()
     st.subheader(f"📊 最近日期：{latest_date.date()}，动量排名前 {top_k} 的股票")
-    st.dataframe(top_momentum)
 
     m = MomentumApp(df)
     m.get_top_momentum(N, top_k)
     chart = m.get_bar_chart(width=800, height=400, labelAngle=45)
-  
+    st.dataframe(m.top_momentum)
+
     # 显示 Altair 图表
     st.altair_chart(chart, use_container_width=True)
