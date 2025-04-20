@@ -187,7 +187,7 @@ if uploaded_file is not None:
     result_df = g.result_df
 
     # 替换为RPS百分位排名
-    for p in periods:
+    for p in g.periods:
         result_df[f"RPS{p}"] = result_df[f"RPS{p}"].rank(pct=True) * 100
 
     # 排序字段选择（所有除“股票代码”的字段）
