@@ -16,6 +16,7 @@ class GeneralIndicator:
         self.periods = [10, 20, 30, 60, 90]
         self.latest_date = self.df["日期"].max()
         self.result_df = None
+        self.vol_period = None
 
     # 指标计算函数
     def calc_metrics(self, group):
@@ -35,15 +36,16 @@ class GeneralIndicator:
                 res[f"RPS{p}"] = change  # 后续再统一替换为百分位排名
 
         returns = group["收盘价"].pct_change().dropna()
-        recent_ret = returns[-vol_period:]
-        res[f"波动率{vol_period}"] = (
-            recent_ret.std() * np.sqrt(252) if len(recent_ret) >= vol_period else np.nan
+        recent_ret = returns[-self.vol_period:]
+        res[f"波动率{self.vol_period}"] = (
+            recent_ret.std() * np.sqrt(252) if len(recent_ret) >= self.vol_period else np.nan
         )
 
         return pd.Series(res)
 
-    def get_rps_and_std(self):
+    def get_rps_and_std(self, vol_period):
         # 应用函数
+        self.vol_period = vol_period
         self.result_df = self.df.groupby("股票代码").apply(self.calc_metrics).reset_index(drop=True)
         return self.result_df
         
