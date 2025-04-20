@@ -9,8 +9,8 @@ uploaded_file = st.file_uploader("📤 上传已包含均线数据的CSV文件�
 
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file, parse_dates=["日期"])
+    df['股票代码'] = df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True)
     df['股票代码'] = df['股票代码'].astype(str).str.ljust(6, "0")
-
     st.success(f"✅ 已加载数据，共 {df['股票代码'].nunique()} 支股票")
 
     # 展示数据
