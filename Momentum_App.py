@@ -90,6 +90,8 @@ if uploaded_file:
     df['日期'] = pd.to_datetime(df['日期'])
     df = df.sort_values(['股票代码', '日期'])
     N = st.slider("📅 选择动量观察窗口（天）", min_value=5, max_value=90, value=30, step=1)
+    # 动量排名数量 slider
+    top_k = st.slider("🏆 选择展示动量排名前几的股票", min_value=10, max_value=300, value=100, step=10)
     st.markdown("---")
     st.markdown("🧠 策略说明：")
     st.markdown(f"""
@@ -98,8 +100,7 @@ if uploaded_file:
     - 应用提示：可尝试不同时间窗口 & 股票数，优化策略参数。
     """)
 
-    # 动量排名数量 slider
-    top_k = st.slider("🏆 选择展示动量排名前几的股票", min_value=10, max_value=300, value=100, step=10)
+
     st.subheader(f"📊 最近日期：{latest_date.date()}，动量排名前 {top_k} 的股票")
     st.dataframe(top_momentum)
 
