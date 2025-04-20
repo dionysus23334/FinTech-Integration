@@ -166,12 +166,6 @@ if uploaded_file is not None:
 
 
 
-
-
-
-    g = GeneralIndicator(df=df)
-
-    g.get_rps_and_std()
     
     # 侧边栏设置
     vol_period = st.sidebar.selectbox(
@@ -180,6 +174,14 @@ if uploaded_file is not None:
         index=2,
         key="vol_period_select"
     )
+
+
+
+
+    g = GeneralIndicator(df=df)
+
+    g.get_rps_and_std(vol_period)
+    
 
     # 应用函数
     result_df = g.result_df
