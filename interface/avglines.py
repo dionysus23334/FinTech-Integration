@@ -28,5 +28,5 @@ class AvgLines:
         if self.is_converging(group, window_length, threshold):
             converging_stocks.append(code)
         
-        return converging_stocks
+        return pd.DataFrame({"股票代码": converging_stocks})
 
