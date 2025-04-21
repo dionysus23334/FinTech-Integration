@@ -2,6 +2,10 @@ import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
 
+from interface.avglines import AvgLines
+
+
+
 st.set_page_config(page_title="股票均线查看器", layout="wide")
 st.title("📈 股票均线可视化工具")
 
