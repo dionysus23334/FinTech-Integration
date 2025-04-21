@@ -4,8 +4,6 @@ import pandas as pd
 
 from interface.avglines import AvgLines
 
-
-
 st.set_page_config(page_title="股票均线查看器", layout="wide")
 st.title("📈 股票均线可视化工具")
 
@@ -120,35 +118,105 @@ if uploaded_file is not None:
 
 
     # 用户设置
+    # st.header("参数设置")
+    # window_length = st.slider("📆 连续收敛时间长度（天）", min_value=2, max_value=30, value=5)
+    # threshold = st.number_input("🎯 收敛强度阈值 P(t) <", value=0.5, step=0.1)
+
+    # # 计算 P(t)
+    # df = df.sort_values(["股票代码", "日期"])
+    # df["P"] = (df["MA_5"] - df["MA_10"])**2 + (df["MA_10"] - df["MA_20"])**2 + (df["MA_5"] - df["MA_20"])**2
+    # df["P_diff"] = df.groupby("股票代码")["P"].diff()
+
+    # # 判断是否收敛
+    # def is_converging(group):
+    #     group = group.dropna(subset=["P_diff", "P"])
+    #     if len(group) < window_length:
+    #         return False
+    #     last_n = group.tail(window_length)
+    #     return all(last_n["P_diff"] < 0) and all(last_n["P"] < threshold)
+
+    # # 筛选股票
+    # converging_stocks = []
+    # for code, group in df.groupby("股票代码"):
+    #     if is_converging(group):
+    #         converging_stocks.append(code)
+
+    # st.success(f"✅ 符合收敛条件的股票数量：{len(converging_stocks)}")
+    # st.dataframe(pd.DataFrame({"股票代码": converging_stocks}))
+
+    # # 可视化部分
+    # selected_code = st.selectbox("🔍 选择查看收敛趋势的股票代码", options=sorted(df["股票代码"].unique()))
+    # stock_df = df[df["股票代码"] == selected_code].copy()
+
+    # # 显示时间范围选择
+    # min_date = stock_df["日期"].min().date()
+    # max_date = stock_df["日期"].max().date()
+    # start_date, end_date = st.slider(
+    # "📅 选择可视化时间范围",
+    # min_value=min_date,
+    # max_value=max_date,
+    # value=(min_date, max_date)
+    # )
+
+    # # 选完日期后再转换回 Timestamp 进行过滤
+    # start_date = pd.to_datetime(start_date)
+    # end_date = pd.to_datetime(end_date)
+
+    # stock_df = stock_df[(stock_df["日期"] >= start_date) & (stock_df["日期"] <= end_date)]
+
+    # # 可视化 P(t)
+    # st.subheader("📊 P(t) 及导数趋势")
+    # chart_data = stock_df.set_index("日期")[["P", "P_diff"]]
+    # chart_data['零线'] = 0.0
+
+
+    # st.line_chart(chart_data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # 用户设置
     st.header("参数设置")
     window_length = st.slider("📆 连续收敛时间长度（天）", min_value=2, max_value=30, value=5)
     threshold = st.number_input("🎯 收敛强度阈值 P(t) <", value=0.5, step=0.1)
 
-    # 计算 P(t)
-    df = df.sort_values(["股票代码", "日期"])
-    df["P"] = (df["MA_5"] - df["MA_10"])**2 + (df["MA_10"] - df["MA_20"])**2 + (df["MA_5"] - df["MA_20"])**2
-    df["P_diff"] = df.groupby("股票代码")["P"].diff()
 
-    # 判断是否收敛
-    def is_converging(group):
-        group = group.dropna(subset=["P_diff", "P"])
-        if len(group) < window_length:
-            return False
-        last_n = group.tail(window_length)
-        return all(last_n["P_diff"] < 0) and all(last_n["P"] < threshold)
-
-    # 筛选股票
-    converging_stocks = []
-    for code, group in df.groupby("股票代码"):
-        if is_converging(group):
-            converging_stocks.append(code)
+    a = AvgLines(df=df)
+    
+    converging_stocks = a.get_convergent_stocks(window_length, threshold)
 
     st.success(f"✅ 符合收敛条件的股票数量：{len(converging_stocks)}")
-    st.dataframe(pd.DataFrame({"股票代码": converging_stocks}))
+    st.dataframe(converging_stocks)
 
     # 可视化部分
-    selected_code = st.selectbox("🔍 选择查看收敛趋势的股票代码", options=sorted(df["股票代码"].unique()))
-    stock_df = df[df["股票代码"] == selected_code].copy()
+    selected_code = st.selectbox("🔍 选择查看收敛趋势的股票代码", options=sorted(a.df["股票代码"].unique()))
+    stock_df = a.df[a.df["股票代码"] == selected_code].copy()
 
     # 显示时间范围选择
     min_date = stock_df["日期"].min().date()
@@ -173,3 +241,4 @@ if uploaded_file is not None:
 
 
     st.line_chart(chart_data)
+
