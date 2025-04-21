@@ -1,7 +1,7 @@
 # FinTech-Integration
 
 The concept frame of project idea
-概念图
+### 概念图
 
 ![Text](img/idea.drawio.png)
 
@@ -21,7 +21,7 @@ The concept frame of project idea
 📋 输出结果区：
 - 满足条件的股票代码 + 指标展示表格
 
-界面示意图
+### 界面示意图
 
 ![Text](img/fig1.png)
 
