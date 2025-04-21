@@ -5,6 +5,22 @@ The concept frame of project idea
 
 ![Text](img/idea.drawio.png)
 
+
+📤 上传文件区：
+- 行情数据（动量+RPS+波动率）
+- 均线数据（用于识别收敛股票）
+- 市值数据（用于范围筛选）
+
+📊 筛选区（Sidebar）：
+- 动量 TopN
+- RPS N日最小值 / 最大值
+- 波动率最大值限制
+- 是否收敛（勾选）
+- 市值范围筛选（总市值/流通市值）
+
+📋 输出结果区：
+- 满足条件的股票代码 + 指标展示表格
+
 界面示意图
 
 ![Text](img/fig1.png)
