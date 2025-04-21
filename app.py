@@ -10,7 +10,8 @@ pages_manager = st.navigation(
         st.Page("Events_And_Prices.py"),
         st.Page("Momentum_App.py"),
         st.Page("Calculate_AvgLines.py"),
-        st.Page("Average_Lines.py")
+        st.Page("Average_Lines.py"),
+        st.Page("Get_Stocks_Pool.py")
         ]
     )
 
