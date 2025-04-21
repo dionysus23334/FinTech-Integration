@@ -35,8 +35,12 @@ if uploaded_main is not None and uploaded_ma is not None:
 
         mom_app = MomentumApp(df_main.copy())
         top_df = mom_app.get_top_momentum(N, top_k)
+        
+        top_df['股票代码'] = top_df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True)
+        
         st.dataframe(top_df)
         st.altair_chart(mom_app.get_bar_chart(), use_container_width=True)
+        
         momentum_codes = set(top_df["股票代码"])
 
     with tab2:
@@ -51,6 +55,9 @@ if uploaded_main is not None and uploaded_ma is not None:
             (rps_df.filter(like="RPS").max(axis=1) > rps_threshold) &
             (rps_df[f"波动率{vol_period}"] < vol_max)
         ]
+        
+        filtered['股票代码'] = filtered['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True)
+        
         st.dataframe(filtered)
         rps_vol_codes = set(filtered["股票代码"])
 
@@ -61,6 +68,9 @@ if uploaded_main is not None and uploaded_ma is not None:
 
         avg = AvgLines(df_ma.copy())
         converged_df = avg.get_convergent_stocks(window, threshold)
+
+        converged_df['股票代码'] = converged_df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True)
+        
         st.dataframe(converged_df)
         avgline_codes = set(converged_df["股票代码"])
 
@@ -75,6 +85,7 @@ if uploaded_main is not None and uploaded_ma is not None:
 
     sets = []
     if "动量策略" in selected_methods:
+        
         sets.append(momentum_codes)
     if "RPS & 波动率" in selected_methods:
         sets.append(rps_vol_codes)
