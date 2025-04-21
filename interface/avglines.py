@@ -25,8 +25,8 @@ class AvgLines:
         # 筛选股票
         converging_stocks = []
         for code, group in self.df.groupby("股票代码"):
-        if self.is_converging(group, window_length, threshold):
-            converging_stocks.append(code)
+            if self.is_converging(group, window_length, threshold):
+                converging_stocks.append(code)
         
         return pd.DataFrame({"股票代码": converging_stocks})
 
