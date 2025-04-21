@@ -74,24 +74,63 @@ if uploaded_main is not None and uploaded_ma is not None:
         st.dataframe(converged_df)
         avgline_codes = set(converged_df["股票代码"])
 
+
+
+        # ===========================
+    # 📦 市值筛选功能
+    # ===========================
+    st.subheader("📦 市值筛选器（可选）")
+    marketcap_file = st.file_uploader("上传市值文件（包含：股票代码, 总市值, 流通市值）", type=["csv"])
+
+    marketcap_codes = None  # 提前定义以便后续交集处理
+
+    if marketcap_file:
+        cap_df = pd.read_csv(marketcap_file, dtype={"股票代码": str})
+        cap_df['股票代码'] = cap_df['股票代码'].astype(str).str.replace(r'^[01]\.', '', regex=True)
+
+        col3, col4, col5 = st.columns(3)
+
+        with col3:
+            cap_type = st.selectbox("选择筛选字段", ["总市值", "流通市值"])
+
+        with col4:
+            min_cap = st.number_input("最小市值", value=0.0, step=1e8)
+
+        with col5:
+            max_cap = st.number_input("最大市值", value=1e12, step=1e9)
+
+        cap_df_filtered = cap_df[
+            (cap_df[cap_type] >= min_cap) & (cap_df[cap_type] <= max_cap)
+        ]
+
+        marketcap_codes = set(cap_df_filtered["股票代码"])
+
+        st.success(f"共有 {len(marketcap_codes)} 支股票满足市值条件")
+        st.dataframe(cap_df_filtered)
+
     st.markdown("---")
     st.header("📌 筛选交集结果")
 
+    strategy_options = ["动量策略", "RPS & 波动率", "均线收敛"]
+    if marketcap_file:
+        strategy_options.append("市值筛选")
+
     selected_methods = st.multiselect(
         "请选择需要满足的策略交集条件",
-        options=["动量策略", "RPS & 波动率", "均线收敛"],
+        options=strategy_options,
         default=["动量策略", "RPS & 波动率"]
     )
-
+    
     sets = []
     if "动量策略" in selected_methods:
-        
         sets.append(momentum_codes)
     if "RPS & 波动率" in selected_methods:
         sets.append(rps_vol_codes)
     if "均线收敛" in selected_methods:
         sets.append(avgline_codes)
-
+    if "市值筛选" in selected_methods and marketcap_codes is not None:
+        sets.append(marketcap_codes)
+        
     if sets:
         final_selection = set.intersection(*sets)
         st.success(f"最终筛选出 {len(final_selection)} 支股票")
