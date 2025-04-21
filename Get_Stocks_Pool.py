@@ -31,7 +31,7 @@ if uploaded_main is not None and uploaded_ma is not None:
     with tab1:
         st.header("🔥 动量筛选器")
         N = st.slider("动量周期（N日）", min_value=5, max_value=90, value=30)
-        top_k = st.slider("展示前Top-K动量股票", min_value=5, max_value=100, value=20)
+        top_k = st.slider("展示前Top-K动量股票", min_value=5, max_value=2000, value=20)
 
         mom_app = MomentumApp(df_main.copy())
         top_df = mom_app.get_top_momentum(N, top_k)
