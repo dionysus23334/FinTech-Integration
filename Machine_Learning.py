@@ -24,8 +24,10 @@ st.markdown("""
 uploaded_file = st.file_uploader("上传股票历史数据 CSV（多只股票）", type="csv")
 
 if uploaded_file:
-    df = pd.read_csv(uploaded_file)
-    df['日期'] = pd.to_datetime(df['日期'])
+    # 读取数据
+    df = pd.read_csv(uploaded_file, dtype={"股票代码": str})
+    df["日期"] = pd.to_datetime(df["日期"])
+
     df = df.sort_values(['股票代码', '日期'])
 
     # 构造标签：明日涨跌幅 > 0 为上涨
