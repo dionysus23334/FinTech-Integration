@@ -11,7 +11,9 @@ uploaded_file = st.file_uploader("📤 上传包含多支股票的CSV文件", ty
 
 if uploaded_file:
     # 读取数据
-    df = pd.read_csv(uploaded_file)
+    df = pd.read_csv(uploaded_file, dtype={"股票代码": str})
+    df["日期"] = pd.to_datetime(df["日期"])
+
     
     # 确保格式正确
     required_cols = {'日期','开盘价','收盘价','成交量','股票代码'}
