@@ -25,7 +25,9 @@ The concept frame of project idea
 
 ![Text](img/fig1.png)
 
+![Text](img/fig2.png)
 
+目前仍在不断更新中
 ---
 
 ### ✅ 三个类功能对比总结：
