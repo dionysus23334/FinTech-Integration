@@ -12,7 +12,8 @@ pages_manager = st.navigation(
         st.Page("Calculate_AvgLines.py"),
         st.Page("Average_Lines.py"),
         st.Page("Get_Stocks_Pool.py"),
-        st.Page("Market_Values.py")
+        st.Page("Market_Values.py"),
+        st.Page("Traditional_Method.py")
         ]
     )
 
