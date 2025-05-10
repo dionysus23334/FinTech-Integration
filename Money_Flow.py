@@ -81,7 +81,7 @@ def plot_money_flow_streamlit(data):
     
     with tab1:
         # 主图表 - 价格与主力资金（类似双Y轴）
-        col1, col2 = st.columns([0.7, 0-superGrok3])
+        col1, col2 = st.columns([0.7, 0.3])
         with col1:
             st.markdown("**收盘价 vs 主力资金**")
             
