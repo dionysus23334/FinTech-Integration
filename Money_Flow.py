@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from matplotlib import rcParams
-from io import StringIO
+
 
 # 设置中文字体
 rcParams['font.sans-serif'] = ['SimHei']
@@ -64,8 +64,7 @@ uploaded_file = st.file_uploader("上传资金流向CSV文件", type="csv")
 
 if uploaded_file is not None:
     # 读取数据
-    stringio = StringIO(uploaded_file.getvalue().decode('utf-8'))
-    df = pd.read_csv(stringio)
+    df = pd.read_csv(uploaded_file, index=False, encoding='utf-8-sig', dtype={'代码': str})
     
     # 数据预处理
     numeric_cols = [col for col in df.columns if col not in ['日期', '股票代码', '股票名称']]
