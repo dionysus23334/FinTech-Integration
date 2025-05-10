@@ -55,8 +55,11 @@ def plot_money_flow(data):
     
     return fig
 
+
+import altair as alt
+
 def plot_money_flow_streamlit(data):
-    """使用Streamlit原生组件绘制资金流向对比图"""
+    """使用Streamlit和Altair绘制资金流向对比图，支持双Y轴和中文显示"""
     
     # 数据预处理
     df_viz = data.copy()
@@ -67,32 +70,63 @@ def plot_money_flow_streamlit(data):
     for col in ['主力净流入(元)', '大单净流入(元)', '超大单净流入(元)', '中单净流入(元)', '小单净流入(元)']:
         df_viz[col] = df_viz[col] / 10000
     
-    # 创建双轴图表
+    # 重置索引以便 Altair 使用日期列
+    df_viz = df_viz.reset_index()
+    
+    # 创建图表标题
     st.subheader(f"{df_viz['股票名称'].iloc[0]} 价格与资金流向对比")
     
     # 选项卡布局
     tab1, tab2 = st.tabs(["📈 趋势对比", "🧮 资金分解"])
     
     with tab1:
-        # 主图表 - 价格与主力资金
-        col1, col2 = st.columns([0.7, 0.3])
+        # 主图表 - 价格与主力资金（类似双Y轴）
+        col1, col2 = st.columns([0.7, 0-superGrok3])
         with col1:
             st.markdown("**收盘价 vs 主力资金**")
-            st.line_chart(
-                df_viz,
-                y=['收盘价', '主力净流入(元)'],
-                color=['#FF0000', '#4169E1']  # 红-价格，蓝-资金
+            
+            # Altair 图表：收盘价
+            price_chart = alt.Chart(df_viz).mark_line(color='red').encode(
+                x=alt.X('日期:T', title='日期'),
+                y=alt.Y('收盘价:Q', title='收盘价 (元)', scale=alt.Scale(zero=False)),
+                tooltip=['日期', '收盘价']
+            ).properties(
+                width=600,
+                height=400
             )
+            
+            # Altair 图表：主力净流入
+            fund_chart = alt.Chart(df_viz).mark_line(color='blue').encode(
+                x=alt.X('日期:T', title='日期'),
+                y=alt.Y('主力净流入(元):Q', title='主力净流入 (万元)', scale=alt.Scale(zero=False)),
+                tooltip=['日期', '主力净流入(元)']
+            ).properties(
+                width=600,
+                height=400
+            )
+            
+            # 合并图表，使用 resolve_scale 实现独立Y轴
+            combined_chart = alt.layer(price_chart, fund_chart).resolve_scale(
+                y='independent'  # 使Y轴独立
+            ).configure(
+                font='SimHei'  # 设置中文字体（需确保系统有该字体）
+            ).configure_axis(
+                titleFont='SimHei',
+                labelFont='SimHei'
+            )
+            
+            # 显示 Altair 图表
+            st.altair_chart(combined_chart, use_container_width=True)
         
         with col2:
             st.metric("累计主力净流入", f"{df_viz['主力净流入(元)'].sum():.1f}万元")
             st.metric("平均收盘价", f"{df_viz['收盘价'].mean():.2f}元")
     
     with tab2:
-        # 资金流向堆叠面积图
+        # 资金流向堆叠面积图（保持原样）
         st.markdown("**资金流向分解（万元）**")
         st.area_chart(
-            df_viz[['超大单净流入(元)', '大单净流入(元)', '中单净流入(元)', '小单净流入(元)']],
+            df_viz.set_index('日期')[['超大单净流入(元)', '大单净流入(元)', '中单净流入(元)', '小单净流入(元)']],
             color=['#32CD32', '#FFA500', '#BA55D3', '#FF4500']  # 超大单绿, 大单橙, 中单紫, 小单红
         )
     
@@ -100,9 +134,9 @@ def plot_money_flow_streamlit(data):
     with st.expander("⚙️ 图表配置"):
         date_range = st.date_input(
             "选择日期范围",
-            value=[df_viz.index.min(), df_viz.index.max()],
-            min_value=df_viz.index.min(),
-            max_value=df_viz.index.max()
+            value=[df_viz['日期'].min(), df_viz['日期'].max()],
+            min_value=df_viz['日期'].min(),
+            max_value=df_viz['日期'].max()
         )
         
         selected_funds = st.multiselect(
@@ -112,15 +146,40 @@ def plot_money_flow_streamlit(data):
         )
         
         # 应用筛选
-        filtered_df = df_viz.loc[pd.to_datetime(date_range[0]):pd.to_datetime(date_range[1])]
+        filtered_df = df_viz[(df_viz['日期'] >= pd.to_datetime(date_range[0])) & 
+                            (df_viz['日期'] <= pd.to_datetime(date_range[1]))]
         fund_cols = [f'{x}净流入(元)' for x in selected_funds]
         
         if selected_funds:
-            st.line_chart(
-                filtered_df,
-                y=['收盘价'] + fund_cols,
-                color=['#FF0000'] + ['#4169E1', '#32CD32', '#FFA500', '#BA55D3', '#FF4500'][:len(selected_funds)]
+            # Altair 交互图表
+            price_chart = alt.Chart(filtered_df).mark_line(color='red').encode(
+                x=alt.X('日期:T', title='日期'),
+                y=alt.Y('收盘价:Q', title='收盘价 (元)', scale=alt.Scale(zero=False)),
+                tooltip=['日期', '收盘价']
             )
+            
+            # 动态添加资金流向线
+            fund_charts = []
+            colors = ['#4169E1', '#32CD32', '#FFA500', '#BA55D3', '#FF4500']
+            for i, col in enumerate(fund_cols):
+                fund_chart = alt.Chart(filtered_df).mark_line(color=colors[i]).encode(
+                    x=alt.X('日期:T', title='日期'),
+                    y=alt.Y(f'{col}:Q', title='资金净流入 (万元)', scale=alt.Scale(zero=False)),
+                    tooltip=['日期', col]
+                )
+                fund_charts.append(fund_chart)
+            
+            # 合并所有图表
+            combined_chart = alt.layer(price_chart, *fund_charts).resolve_scale(
+                y='independent'  # 独立Y轴
+            ).configure(
+                font='SimHei'
+            ).configure_axis(
+                titleFont='SimHei',
+                labelFont='SimHei'
+            )
+            
+            st.altair_chart(combined_chart, use_container_width=True)
 
 # Streamlit应用界面
 st.set_page_config(layout="wide")
