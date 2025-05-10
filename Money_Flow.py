@@ -7,7 +7,7 @@ import matplotlib
 
 
 # 设置中文字体
-rcParams['font.sans-serif'] = ['fonts/SimHei.fff']
+rcParams['font.sans-serif'] = ['fonts/SimHei.ttf']
 rcParams['axes.unicode_minus'] = False
 
 def plot_money_flow(data):
