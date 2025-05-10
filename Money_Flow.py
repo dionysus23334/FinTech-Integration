@@ -8,20 +8,22 @@ import matplotlib
 
 import matplotlib.font_manager as fm
 
-# 配置字体
-font_path = "/mount/src/fintech-integration/fonts/SimHei.ttf"
-try:
-    # 加载 SimHei.ttf
-    fm.fontManager.addfont(font_path)
-    prop = fm.FontProperties(fname=font_path)
-    plt.rcParams['font.sans-serif'] = [prop.get_name()]
-    plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
-except Exception as e:
-    print(f"加载 SimHei.ttf 失败: {e}")
-    # 备选字体：Noto Sans CJK SC
-    plt.rcParams['font.sans-serif'] = ['Noto Sans CJK SC', 'sans-serif']
-    plt.rcParams['axes.unicode_minus'] = False
-plt.rcParams['font.sans-serif'] = ['SimHei', 'Noto Sans CJK SC', 'sans-serif']
+# # 配置字体
+# font_path = "/mount/src/fintech-integration/fonts/SimHei.ttf"
+# try:
+#     # 加载 SimHei.ttf
+#     fm.fontManager.addfont(font_path)
+#     prop = fm.FontProperties(fname=font_path)
+#     plt.rcParams['font.sans-serif'] = [prop.get_name()]
+#     plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
+# except Exception as e:
+#     print(f"加载 SimHei.ttf 失败: {e}")
+#     # 备选字体：Noto Sans CJK SC
+#     plt.rcParams['font.sans-serif'] = ['Noto Sans CJK SC', 'sans-serif']
+#     plt.rcParams['axes.unicode_minus'] = False
+# plt.rcParams['font.sans-serif'] = ['SimHei', 'Noto Sans CJK SC', 'sans-serif']
+
+matplotlib.rc("font",family='YouYuan')
 def plot_money_flow(data):
     """绘制资金流向对比图"""
     fig, ax1 = plt.subplots(figsize=(12, 6))
