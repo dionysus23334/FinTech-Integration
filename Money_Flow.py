@@ -55,6 +55,73 @@ def plot_money_flow(data):
     
     return fig
 
+def plot_money_flow_streamlit(data):
+    """使用Streamlit原生组件绘制资金流向对比图"""
+    
+    # 数据预处理
+    df_viz = data.copy()
+    df_viz['日期'] = pd.to_datetime(df_viz['日期'])
+    df_viz.set_index('日期', inplace=True)
+    
+    # 转换为万元单位
+    for col in ['主力净流入(元)', '大单净流入(元)', '超大单净流入(元)', '中单净流入(元)', '小单净流入(元)']:
+        df_viz[col] = df_viz[col] / 10000
+    
+    # 创建双轴图表
+    st.subheader(f"{df_viz['股票名称'].iloc[0]} 价格与资金流向对比")
+    
+    # 选项卡布局
+    tab1, tab2 = st.tabs(["📈 趋势对比", "🧮 资金分解"])
+    
+    with tab1:
+        # 主图表 - 价格与主力资金
+        col1, col2 = st.columns([0.7, 0.3])
+        with col1:
+            st.markdown("**收盘价 vs 主力资金**")
+            st.line_chart(
+                df_viz,
+                y=['收盘价', '主力净流入(元)'],
+                color=['#FF0000', '#4169E1']  # 红-价格，蓝-资金
+            )
+        
+        with col2:
+            st.metric("累计主力净流入", f"{df_viz['主力净流入(元)'].sum():.1f}万元")
+            st.metric("平均收盘价", f"{df_viz['收盘价'].mean():.2f}元")
+    
+    with tab2:
+        # 资金流向堆叠面积图
+        st.markdown("**资金流向分解（万元）**")
+        st.area_chart(
+            df_viz[['超大单净流入(元)', '大单净流入(元)', '中单净流入(元)', '小单净流入(元)']],
+            color=['#32CD32', '#FFA500', '#BA55D3', '#FF4500']  # 超大单绿, 大单橙, 中单紫, 小单红
+        )
+    
+    # 添加交互控件
+    with st.expander("⚙️ 图表配置"):
+        date_range = st.date_input(
+            "选择日期范围",
+            value=[df_viz.index.min(), df_viz.index.max()],
+            min_value=df_viz.index.min(),
+            max_value=df_viz.index.max()
+        )
+        
+        selected_funds = st.multiselect(
+            "选择要显示的资金类型",
+            options=['主力', '大单', '超大单', '中单', '小单'],
+            default=['主力', '超大单']
+        )
+        
+        # 应用筛选
+        filtered_df = df_viz.loc[pd.to_datetime(date_range[0]):pd.to_datetime(date_range[1])]
+        fund_cols = [f'{x}净流入(元)' for x in selected_funds]
+        
+        if selected_funds:
+            st.line_chart(
+                filtered_df,
+                y=['收盘价'] + fund_cols,
+                color=['#FF0000'] + ['#4169E1', '#32CD32', '#FFA500', '#BA55D3', '#FF4500'][:len(selected_funds)]
+            )
+
 # Streamlit应用界面
 st.set_page_config(layout="wide")
 st.title('📈 股票资金流向分析工具')
@@ -82,6 +149,7 @@ if uploaded_file is not None:
     # 绘制图表
     st.subheader('📊 价格与资金流向对比')
     fig = plot_money_flow(df)
+    
     st.pyplot(fig)
     
     # 资金分析指标
@@ -105,6 +173,9 @@ if uploaded_file is not None:
         file_name='资金流向分析.csv',
         mime='text/csv'
     )
+
+    plot_money_flow_streamlit(df)
+
 else:
     st.info('请上传CSV文件，格式参考：日期,主力净流入(元),小单净流入(元),中单净流入(元),大单净流入(元),超大单净流入(元)...')
 
