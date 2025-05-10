@@ -21,7 +21,7 @@ except Exception as e:
     # 备选字体：Noto Sans CJK SC
     plt.rcParams['font.sans-serif'] = ['Noto Sans CJK SC', 'sans-serif']
     plt.rcParams['axes.unicode_minus'] = False
-
+plt.rcParams['font.sans-serif'] = ['SimHei', 'Noto Sans CJK SC', 'sans-serif']
 def plot_money_flow(data):
     """绘制资金流向对比图"""
     fig, ax1 = plt.subplots(figsize=(12, 6))
