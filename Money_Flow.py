@@ -23,7 +23,7 @@ import matplotlib.font_manager as fm
 #     plt.rcParams['axes.unicode_minus'] = False
 # plt.rcParams['font.sans-serif'] = ['SimHei', 'Noto Sans CJK SC', 'sans-serif']
 
-matplotlib.rc("font",family='YouYuan')
+matplotlib.rc("font",family='SimHei')
 def plot_money_flow(data):
     """绘制资金流向对比图"""
     fig, ax1 = plt.subplots(figsize=(12, 6))
