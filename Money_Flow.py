@@ -6,9 +6,9 @@ from matplotlib import rcParams
 import matplotlib
 
 matplotlib.rc("font",family='MicroSoft YaHei',weight="bold")
-# 设置中文字体
-rcParams['font.sans-serif'] = ['SimHei']
-rcParams['axes.unicode_minus'] = False
+# # 设置中文字体
+# rcParams['font.sans-serif'] = ['SimHei']
+# rcParams['axes.unicode_minus'] = False
 
 def plot_money_flow(data):
     """绘制资金流向对比图"""
