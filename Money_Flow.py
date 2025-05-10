@@ -9,7 +9,7 @@ import matplotlib
 import matplotlib.font_manager as fm
 
 # 加载 SimHei.ttf
-font_path = 'fonts/SimHei.ttf'
+font_path = './fonts/SimHei.ttf'
 fm.fontManager.addfont(font_path)
 prop = fm.FontProperties(fname=font_path)
 
