@@ -6,9 +6,16 @@ from matplotlib import rcParams
 import matplotlib
 
 
-# 设置中文字体
-rcParams['font.sans-serif'] = ['fonts/SimHei.ttf']
-rcParams['axes.unicode_minus'] = False
+import matplotlib.font_manager as fm
+
+# 加载 SimHei.ttf
+font_path = 'fonts/SimHei.ttf'
+fm.fontManager.addfont(font_path)
+prop = fm.FontProperties(fname=font_path)
+
+# 设置字体
+plt.rcParams['font.sans-serif'] = [prop.get_name()]
+plt.rcParams['axes.unicode_minus'] = False
 
 def plot_money_flow(data):
     """绘制资金流向对比图"""
