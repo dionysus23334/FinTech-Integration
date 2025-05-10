@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from matplotlib import rcParams
+import matplotlib
 
 matplotlib.rc("font",family='MicroSoft YaHei',weight="bold")
 # 设置中文字体
