@@ -27,6 +27,8 @@ The concept frame of project idea
 
 ![Text](img/fig2.png)
 
+![Text](img/fig3.png)
+
 目前仍在不断更新中
 ---
 
