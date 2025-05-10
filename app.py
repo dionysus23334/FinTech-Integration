@@ -15,7 +15,7 @@ pages_manager = st.navigation(
         st.Page("Market_Values.py"),
         st.Page("Traditional_Method.py"),
         st.Page("Machine_Learning.py"),
-        st.Page("Money_Flow.py")
+        st.Page("Money_Flow.py"),
     ]
     )
 
