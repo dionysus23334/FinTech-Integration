@@ -30,30 +30,26 @@ st.write("上传包含 '日期', '最高价', '最低价', '收盘价_flow' 列�
 uploaded_file = st.file_uploader("上传CSV文件", type=["csv"])
 if uploaded_file:
     df = pd.read_csv(uploaded_file, dtype={'股票代码': str})
-    df["日期"] = pd.to_datetime(df["日期"])
-    df = df.sort_values("日期")
 
-    # 计算 KDJ
-    df_kdj = calculate_kdj(df)
+    required_columns = {'日期', '最高价', '最低价', '收盘价_flow'}
+    if not required_columns.issubset(df.columns):
+        st.error(f"CSV文件必须包含以下列：{', '.join(required_columns)}")
+    else:
+        df['日期'] = pd.to_datetime(df['日期'])
+        df = df.sort_values('日期')
+        df_kdj = calculate_kdj(df)
 
-    # 画图
-    st.subheader("📉 收盘价趋势图")
-    fig1, ax1 = plt.subplots(figsize=(10, 4))
-    ax1.plot(df_kdj["日期"], df_kdj["收盘价_flow"], label="收盘价", color="blue")
-    ax1.set_xlabel("日期")
-    ax1.set_ylabel("价格")
-    ax1.legend()
-    st.pyplot(fig1)
+        st.subheader("📉 收盘价曲线")
+        chart_data_price = df_kdj.set_index('日期')[['收盘价_flow']]
+        st.line_chart(chart_data_price)
 
-    st.subheader("📊 KDJ 指标图")
-    fig2, ax2 = plt.subplots(figsize=(10, 4))
-    ax2.plot(df_kdj["日期"], df_kdj["K"], label="K", color="green")
-    ax2.plot(df_kdj["日期"], df_kdj["D"], label="D", color="orange")
-    ax2.plot(df_kdj["日期"], df_kdj["J"], label="J", color="red")
-    ax2.set_xlabel("日期")
-    ax2.set_ylabel("指标值")
-    ax2.legend()
-    st.pyplot(fig2)
+        st.subheader("📊 KDJ 曲线")
+        chart_data_kdj = df_kdj.set_index('日期')[['K', 'D', 'J']]
+        st.line_chart(chart_data_kdj)
+
+        with st.expander("📋 展开查看KDJ数据表格"):
+            st.dataframe(df_kdj)
+
 
     # 显示数据表
     with st.expander("🔍 查看KDJ数据表"):
