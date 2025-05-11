@@ -37,6 +37,10 @@ if uploaded_file:
     else:
         df['日期'] = pd.to_datetime(df['日期'])
         df = df.sort_values('日期')
+
+        # ➕ 仅保留最近30天数据
+        df_kdj_recent = df_kdj.head(30)
+        
         df_kdj = calculate_kdj(df)
 
         st.subheader("📉 收盘价曲线")
