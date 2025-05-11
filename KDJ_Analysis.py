@@ -37,48 +37,37 @@ if uploaded_file:
         st.error(f"CSV文件必须包含以下列：{', '.join(required_columns)}")
     else:
         df['日期'] = pd.to_datetime(df['日期'])
-
-        df_kdj = calculate_kdj(df)
-        
+        # 添加滑动条：选取最近 N 天数据
+        max_days = len(df)
+        days = st.slider("选择展示最近的天数", min_value=10, max_value=max_days, value=30, step=1)
         # ➕ 仅保留最近30天数据
-        df_kdj = df_kdj.head(30)
-
+        df_recent = df.tail(days)
+        df_kdj = calculate_kdj(df_recent)
         
-        st.subheader("📉 收盘价曲线")
-        chart_data_price = df_kdj.set_index('日期')[['收盘价_flow']]
-        st.line_chart(chart_data_price)
+        st.subheader(f"📉 最近{d}天收盘价曲线")
+        # 计算 Y 轴上下限
+        y_min = df_kdj['最低价'].min()
+        y_max = df_kdj['最高价'].max()
+        
+        # 创建 Altair 图表
+        price_chart = alt.Chart(df_kdj).mark_line(color='blue').encode(
+            x='日期:T',
+            y=alt.Y('收盘价_flow:Q', scale=alt.Scale(domain=[y_min, y_max]))
+        ).properties(
+            width=700,
+            height=300,
+            title="收盘价曲线（最近30天）"
+        )
+        
+        st.altair_chart(price_chart, use_container_width=True)
+        
+      
 
-        st.subheader("📊 KDJ 曲线")
+        st.subheader(f"📊 最近{d}天 KDJ 曲线")
         chart_data_kdj = df_kdj.set_index('日期')[['K', 'D', 'J']]
         st.line_chart(chart_data_kdj)
 
         with st.expander("📋 展开查看KDJ数据表格"):
-            st.dataframe(df_kdj)
+            st.dataframe(df_kdj[["日期", "收盘价_flow", "K", "D", "J"]].reset_index(drop=True))
 
 
-
-
-
-    st.subheader("📉 最近30天收盘价曲线（固定Y轴范围）")
-    
-    # 计算 Y 轴上下限
-    y_min = df_kdj['最低价'].min()
-    y_max = df_kdj['最高价'].max()
-    
-    # 创建 Altair 图表
-    price_chart = alt.Chart(df_kdj).mark_line(color='blue').encode(
-        x='日期:T',
-        y=alt.Y('收盘价_flow:Q', scale=alt.Scale(domain=[y_min, y_max]))
-    ).properties(
-        width=700,
-        height=300,
-        title="收盘价曲线（最近30天）"
-    )
-    
-    st.altair_chart(price_chart, use_container_width=True)
-    
-        
-
-    # 显示数据表
-    with st.expander("🔍 查看KDJ数据表"):
-        st.dataframe(df_kdj[["日期", "收盘价_flow", "K", "D", "J"]].reset_index(drop=True))
