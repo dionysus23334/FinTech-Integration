@@ -41,7 +41,6 @@ if uploaded_file:
         # 添加滑动条：选取最近 N 天数据
         max_days = len(df)
 
-        
         days = st.slider("选择展示最近的天数", min_value=10, max_value=max_days, value=30, step=1)
         # ➕ 仅保留最近30天数据
         df_recent = df.head(days)
