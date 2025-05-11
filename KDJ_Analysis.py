@@ -62,7 +62,7 @@ if uploaded_file:
         ).properties(
             width=700,
             height=300,
-            title="收盘价曲线（最近30天）"
+            title=f"收盘价曲线（最近{days}天）"
         )
         
         st.altair_chart(price_chart, use_container_width=True)
