@@ -44,7 +44,7 @@ if uploaded_file:
         df_recent = df.tail(days)
         df_kdj = calculate_kdj(df_recent)
         
-        st.subheader(f"📉 最近{d}天收盘价曲线")
+        st.subheader(f"📉 最近{days}天收盘价曲线")
         # 计算 Y 轴上下限
         y_min = df_kdj['最低价'].min()
         y_max = df_kdj['最高价'].max()
