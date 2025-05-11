@@ -6,6 +6,7 @@ import altair as alt
 # KDJ 计算函数
 def calculate_kdj(df, n=9, m1=3, m2=3):
     df = df.copy()
+    df = df
     df["low_n"] = df["最低价"].rolling(window=n, min_periods=1).min()
     df["high_n"] = df["最高价"].rolling(window=n, min_periods=1).max()
     df["RSV"] = (df["收盘价_flow"] - df["low_n"]) / (df["high_n"] - df["low_n"]) * 100
@@ -73,6 +74,6 @@ if uploaded_file:
         st.line_chart(chart_data_kdj)
 
         with st.expander("📋 展开查看KDJ数据表格"):
-            st.dataframe(df_kdj[["日期", "收盘价_flow", "K", "D", "J"]].reset_index(drop=True))
+            st.dataframe(df_kdj.reset_index(drop=True))
 
 
