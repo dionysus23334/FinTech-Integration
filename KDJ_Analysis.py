@@ -38,11 +38,12 @@ if uploaded_file:
         df['日期'] = pd.to_datetime(df['日期'])
         df = df.sort_values('日期')
 
-        # ➕ 仅保留最近30天数据
-        df_kdj_recent = df_kdj.head(30)
-        
         df_kdj = calculate_kdj(df)
+        
+        # ➕ 仅保留最近30天数据
+        df_kdj = df_kdj.head(30)
 
+        
         st.subheader("📉 收盘价曲线")
         chart_data_price = df_kdj.set_index('日期')[['收盘价_flow']]
         st.line_chart(chart_data_price)
