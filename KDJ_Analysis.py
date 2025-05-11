@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import altair as alt
 
 # KDJ 计算函数
 def calculate_kdj(df, n=9, m1=3, m2=3):
@@ -54,6 +55,29 @@ if uploaded_file:
         with st.expander("📋 展开查看KDJ数据表格"):
             st.dataframe(df_kdj)
 
+
+
+
+
+    st.subheader("📉 最近30天收盘价曲线（固定Y轴范围）")
+    
+    # 计算 Y 轴上下限
+    y_min = df_kdj['最低价'].min()
+    y_max = df_kdj['最高价'].max()
+    
+    # 创建 Altair 图表
+    price_chart = alt.Chart(df_kdj).mark_line(color='blue').encode(
+        x='日期:T',
+        y=alt.Y('收盘价_flow:Q', scale=alt.Scale(domain=[y_min, y_max]))
+    ).properties(
+        width=700,
+        height=300,
+        title="收盘价曲线（最近30天）"
+    )
+    
+    st.altair_chart(price_chart, use_container_width=True)
+    
+        
 
     # 显示数据表
     with st.expander("🔍 查看KDJ数据表"):
