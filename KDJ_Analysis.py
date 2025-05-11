@@ -63,7 +63,7 @@ if uploaded_file:
         
       
 
-        st.subheader(f"📊 最近{d}天 KDJ 曲线")
+        st.subheader(f"📊 最近{days}天 KDJ 曲线")
         chart_data_kdj = df_kdj.set_index('日期')[['K', 'D', 'J']]
         st.line_chart(chart_data_kdj)
 
