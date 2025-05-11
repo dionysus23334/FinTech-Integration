@@ -37,7 +37,11 @@ if uploaded_file:
         st.error(f"CSV文件必须包含以下列：{', '.join(required_columns)}")
     else:
         df['日期'] = pd.to_datetime(df['日期'])
+        df = df.sort_values("日期")
         df_kdj = calculate_kdj(df)
+            # 排序：日期近的在上
+        df.sort_values(by=["股票代码", "日期"], ascending=[True, False], inplace=True)
+        df_kdj.sort_values(by=["股票代码", "日期"], ascending=[True, False], inplace=True)
         # 添加滑动条：选取最近 N 天数据
         max_days = len(df)
 
