@@ -37,20 +37,22 @@ if uploaded_file:
         st.error(f"CSV文件必须包含以下列：{', '.join(required_columns)}")
     else:
         df['日期'] = pd.to_datetime(df['日期'])
+        df_kdj = calculate_kdj(df)
         # 添加滑动条：选取最近 N 天数据
         max_days = len(df)
+
+        
         days = st.slider("选择展示最近的天数", min_value=10, max_value=max_days, value=30, step=1)
         # ➕ 仅保留最近30天数据
-        df_recent = df.tail(days)
-        df_kdj = calculate_kdj(df_recent)
-        
+        df_recent = df.head(days)
+   
         st.subheader(f"📉 最近{days}天收盘价曲线")
         # 计算 Y 轴上下限
-        y_min = df_kdj['最低价'].min()
-        y_max = df_kdj['最高价'].max()
+        y_min = df_recent['最低价'].min()
+        y_max = df_recent['最高价'].max()
         
         # 创建 Altair 图表
-        price_chart = alt.Chart(df_kdj).mark_line(color='blue').encode(
+        price_chart = alt.Chart(df_recent).mark_line(color='blue').encode(
             x='日期:T',
             y=alt.Y('收盘价_flow:Q', scale=alt.Scale(domain=[y_min, y_max]))
         ).properties(
@@ -61,7 +63,7 @@ if uploaded_file:
         
         st.altair_chart(price_chart, use_container_width=True)
         
-      
+        df_kdj = df_kdj.head(days)
 
         st.subheader(f"📊 最近{days}天 KDJ 曲线")
         chart_data_kdj = df_kdj.set_index('日期')[['K', 'D', 'J']]
