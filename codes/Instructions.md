@@ -14,6 +14,14 @@ PricesAndEvents.ipynb 价格和公告事件的伴随图 Events And Prices 页面
 moneyflow.ipynb 资金流向跟踪爬取 Money Flow 页面可使用该格式数据
 
 
+| 文件名               | 功能描述           | 可使用页面                                                         |
+|--------------------|------------------|--------------------------------------------------------------------|
+| Average_Lines.ipynb | 获取均线数据       | Average Lines、Get Stocks Pool                                    |
+| CompleteCodes.ipynb | 获取90天K线数据     | Stock Data、RPS And STD、Calculate AvgLines、Momentum App、Get Stocks Pool、Traditional Method、Machine Learning |
+| EventsScrape.ipynb  | 公告事件爬取       | Events And Prices                                                  |
+| MarketValue.ipynb   | 市值爬取           | Market Values                                                      |
+| PricesAndEvents.ipynb | 价格和公告事件的伴随图 | Events And Prices                                                  |
+| moneyflow.ipynb     | 资金流向跟踪爬取    | Money Flow                                                         |
 
 
 
