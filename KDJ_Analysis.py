@@ -36,7 +36,6 @@ if uploaded_file:
         st.error(f"CSV文件必须包含以下列：{', '.join(required_columns)}")
     else:
         df['日期'] = pd.to_datetime(df['日期'])
-        df = df.sort_values('日期')
 
         df_kdj = calculate_kdj(df)
         
