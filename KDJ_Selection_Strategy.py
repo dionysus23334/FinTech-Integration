@@ -92,3 +92,21 @@ if uploaded_file:
                 ).properties(width=800, height=400, title=f"{selected_code} 的 KDJ 曲线"),
                 use_container_width=True
             )
+            
+            # 获取唯一的股票代码列表
+            matched_codes = final_result_df["股票代码"].unique()
+            matched_codes_df = pd.DataFrame(matched_codes, columns=["股票代码"])
+            
+            # 显示股票代码列表
+            st.markdown("### ✅ 满足条件的股票代码列表")
+            st.write(matched_codes_df)
+            
+            # 添加导出按钮
+            csv = matched_codes_df.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="📥 下载股票代码列表 CSV",
+                data=csv,
+                file_name=f"matched_stocks_last{lookback_days}days.csv",
+                mime='text/csv'
+            )
+
