@@ -28,7 +28,7 @@ st.title("📈 股票 KDJ 指标分析工具")
 # 上传 CSV 文件
 uploaded_file = st.file_uploader("📤 上传包含 '日期', '股票代码', '最高价', '最低价', '收盘价_flow' 的CSV", type=["csv"])
 if uploaded_file:
-    df = pd.read_csv(uploaded_file, dtype={"股票代码": str})
+    df = pd.read_csv(uploaded_file, dtype={"股票代码": str}, encoding='utf-8-sig')
     required_columns = {'日期', '最高价', '最低价', '收盘价_flow', '股票代码'}
 
     if not required_columns.issubset(df.columns):
