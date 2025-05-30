@@ -40,5 +40,4 @@ The concept frame of project idea
 | `GeneralIndicator` | 计算多周期涨幅（RPS）和波动率 | `DataFrame` + 股票筛选表 | 波动率周期、RPS和波动率筛选条件 |
 | `MomentumApp` | 获取动量值前 N 强股票并可视化 | `DataFrame(TopN)` + 动量柱状图 | 动量周期N、TopK个数 |
 
----
-
+想要数据可以私我，这里一小时左右的运行时间可拿到90天所有股票，即5000多个股票的k线数据，也可以获取市值等等数据。
